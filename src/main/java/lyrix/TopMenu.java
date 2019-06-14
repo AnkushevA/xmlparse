@@ -1,8 +1,7 @@
 package lyrix;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -10,9 +9,7 @@ import java.io.File;
 public class TopMenu extends JPanel implements ActionListener {
 
     private JButton expandTreeButton;
-
     private JButton collapseTreeButton;
-
     private JButton chooseFolderButton;
 
 //    private JButton clearTree;
@@ -74,9 +71,8 @@ public class TopMenu extends JPanel implements ActionListener {
         // Определение режима - только каталог
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml", "XML");
-        fileChooser.setFileFilter(filter);
-
+//        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml", "XML");
+//        fileChooser.setFileFilter(filter);
         File workingDirectory = new File(System.getProperty("user.dir"));
         fileChooser.setCurrentDirectory(workingDirectory);
 
@@ -88,8 +84,8 @@ public class TopMenu extends JPanel implements ActionListener {
             listRefreshListener.refreshList(path);
         }
         else{
-            statusbarListener.changeStatus("Выберите папку.");
-//            JOptionPane.showMessageDialog(this, "Выберите папку.");
+//            statusbarListener.changeStatus("Выберите папку.");
+//            JOptionPane.showMessageDialog(null, "Выберите папку.");
         }
     }
 }

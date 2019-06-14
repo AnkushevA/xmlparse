@@ -13,6 +13,8 @@ public class LeftMenu extends JPanel {
     private DefaultListModel items;
     private HashMap<String, String> menuFiles;
 
+    private ListItemChooseListener listItemChooseListener;
+
     public LeftMenu(){
         menuFiles = new HashMap<>();
 
@@ -22,12 +24,16 @@ public class LeftMenu extends JPanel {
         itemsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) { //todo добавить обработчик нажатий на список XMl
-                 /*String selectedValue = (String) itemsList.getSelectedValue();
-                 items.addElement("asddddddddasdsadsadsaddsad");*/
+                 String selectedValue = (String) itemsList.getSelectedValue();
+                 listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
             }
         });
 
         add(itemsList);
+    }
+
+    public void setListItemChooseListener(ListItemChooseListener listItemChooseListener) {
+        this.listItemChooseListener = listItemChooseListener;
     }
 
     public void refreshMenu(String path) {

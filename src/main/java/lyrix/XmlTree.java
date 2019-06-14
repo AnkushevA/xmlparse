@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.*;
@@ -16,21 +17,20 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class XmlTree extends JPanel{
     private JTree tree;
 
-//    private DefaultMutableTreeNode rootNode;
+    private DefaultMutableTreeNode rootNode;
 
     public XmlTree(){
-        addTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
-        //tree = new JTree();
+        drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
+//        tree = new JTree();
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
     }
 
-    public void addTree(String xmlPath) {
+    public void drawTree(String xmlPath) {
         //tree.setModel(null); //сбросить дерево
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("root"); //корень дерева
-        tree = new JTree(node);
         try{
-            buildTree(xmlPath, node); //построить дерево
+            DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
+            tree = new JTree(new DefaultTreeModel(node));
         }catch(ParserConfigurationException e){
             e.printStackTrace();
         }catch(SAXException e){
@@ -38,31 +38,30 @@ public class XmlTree extends JPanel{
         }catch(IOException e){
             e.printStackTrace();
         }
+
+
     }
 
-    private void buildTree(String xmlPath, DefaultMutableTreeNode node) throws ParserConfigurationException, SAXException, IOException {
+    private DefaultMutableTreeNode buildTree(String xmlPath) throws ParserConfigurationException, SAXException, IOException {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("root"); //корень дерева
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
 
-        File file = null;
-
-        try {
-            file = getFileResource("example2.xml");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        File file = new File(xmlPath); //todo проверить что файл существует
 
         Document document = builder.parse(file);
         Element e = document.getDocumentElement();
 
         if(e.hasChildNodes()){
-//            DefaultMutableTreeNode root = new DefaultMutableTreeNode(e.getTagName());
             NodeList children = e.getChildNodes();
             for(int i = 0; i < children.getLength(); i++){
                 Node child = children.item(i);
                 addNode(child,node);
             }
         }
+
+        return node;
     }
 
     public void addNode(Node child, DefaultMutableTreeNode parent){

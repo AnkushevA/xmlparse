@@ -16,21 +16,16 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         xmlTree = new XmlTree();
-
-        leftMenu = new LeftMenu();
-
         statusBar = new StatusBar();
 
         addTopMenu();
-
         addTreeMenu();
-
         addLeftMenu();
 
         statusBar.setPreferredSize(new Dimension(getWidth(), 25));
         add(statusBar, BorderLayout.SOUTH);
 
-        //xmlTree.addTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
+        //xmlTree.drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
 
         setSize(600, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,7 +39,7 @@ public class MainFrame extends JFrame {
             @Override
             public void expandOrCollapseTree(boolean expand) {
                 xmlTree.expandAll(expand);
-//                xmlTree.addTree("");
+//                xmlTree.drawTree("");
                 // create a toast message
             }
         });
@@ -66,6 +61,16 @@ public class MainFrame extends JFrame {
     }
 
     private void addLeftMenu() {
+        leftMenu = new LeftMenu();
+
+        leftMenu.setListItemChooseListener(new ListItemChooseListener() {
+            @Override
+            public void redrawTree(String xmlPath) {
+                //xmlTree.drawTree(xmlPath);
+                JOptionPane.showMessageDialog(null, xmlPath);
+            }
+        });
+
         JScrollPane leftMenuScrollPane = new JScrollPane(leftMenu);
         leftMenuScrollPane.setPreferredSize(new Dimension(150, getHeight()));
         leftMenuScrollPane.getViewport().setBackground(Color.white);
