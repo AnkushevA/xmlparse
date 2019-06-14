@@ -1,0 +1,42 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:car="http://cardlibrary2.webservices.integration.css.aamsystems.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <car:changeIssue>
+         <car:aSession>?</car:aSession>
+         <car:aIssueId>
+            <car:additionalID>?</car:additionalID>
+            <car:primaryID>?</car:primaryID>
+            <car:systemID>?</car:systemID>
+         </car:aIssueId>
+         <car:aCardData>
+            <car:PIN>?</car:PIN>
+            <car:accessLevels>
+               <!--Zero or more repetitions:-->
+               <car:item>
+                  <car:id>
+                     <car:additionalID>?</car:additionalID>
+                     <car:primaryID>?</car:primaryID>
+                     <car:systemID>?</car:systemID>
+                  </car:id>
+                  <car:label>?</car:label>
+               </car:item>
+            </car:accessLevels>
+            <car:active>?</car:active>
+            <car:endTime>?</car:endTime>
+            <car:fields>
+               <!--Zero or more repetitions:-->
+               <car:item>
+                  <car:MName>?</car:MName>
+                  <car:MLabel>?</car:MLabel>
+                  <car:MType>?</car:MType>
+                  <car:subType>?</car:subType>
+                  <car:MValue>?</car:MValue>
+               </car:item>
+            </car:fields>
+            <car:number>?</car:number>
+            <car:startTime>?</car:startTime>
+         </car:aCardData>
+         <car:aActiveFilter>?</car:aActiveFilter>
+      </car:changeIssue>
+   </soapenv:Body>
+</soapenv:Envelope>
