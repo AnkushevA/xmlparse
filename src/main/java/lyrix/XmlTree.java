@@ -15,13 +15,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class XmlTree extends JPanel{
     private JTree tree;
+
 //    private DefaultMutableTreeNode rootNode;
 
     public XmlTree(){
         addTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
         //tree = new JTree();
-
-
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
     }
@@ -48,7 +47,7 @@ public class XmlTree extends JPanel{
         File file = null;
 
         try {
-            file = getFileResource("example1.xml");
+            file = getFileResource("example2.xml");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

@@ -4,18 +4,23 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 
-public class BottomMenu extends JPanel {
+public class StatusBar extends JPanel {
 
-//    private
 
-    public BottomMenu()
-    {
+    private JLabel statusLabel;
 
+    public StatusBar() {
         setBorder(new BevelBorder(BevelBorder.LOWERED));
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel statusLabel = new JLabel("status");
+        statusLabel = new JLabel("status");
+        statusLabel.setForeground(Color.red);
         statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
         add(statusLabel);
+    }
+
+    public void refreshStatus(String message)
+    {
+        statusLabel.setText(message);
     }
 
 }
