@@ -9,27 +9,38 @@ public class MainFrame extends JFrame {
     private LeftMenu leftMenu;
     private TopMenu topMenu;
     private StatusBar statusBar;
+    private JSplitPane centralSplitMenu;
+    private JScrollPane leftMenuScrollPane;
+    private JScrollPane treeScrollPane;
 
     public MainFrame() {
         super("Window");
 
         setLayout(new BorderLayout());
 
-        xmlTree = new XmlTree();
-        statusBar = new StatusBar();
-
         addTopMenu();
-        addTreeMenu();
-        addLeftMenu();
+        createTreeMenu();
+        createLeftMenu();
+        addSplitMenu();
+        addStatusBar();
 
-        statusBar.setPreferredSize(new Dimension(getWidth(), 25));
-        add(statusBar, BorderLayout.SOUTH);
-
-        //xmlTree.drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
-
-        setSize(600, 700);
+        setSize(800, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private void addStatusBar() {
+        statusBar = new StatusBar();
+        statusBar.setPreferredSize(new Dimension(getWidth(), 25));
+        add(statusBar, BorderLayout.SOUTH);
+    }
+
+    private void addSplitMenu() {
+        centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftMenuScrollPane, treeScrollPane);
+        centralSplitMenu.setOneTouchExpandable(true);
+        centralSplitMenu.setDividerLocation(150);
+
+        add(centralSplitMenu, BorderLayout.CENTER);
     }
 
     private void addTopMenu() {
@@ -40,7 +51,6 @@ public class MainFrame extends JFrame {
             public void expandOrCollapseTree(boolean expand) {
                 xmlTree.expandAll(expand);
 //                xmlTree.drawTree("");
-                // create a toast message
             }
         });
 
@@ -60,7 +70,7 @@ public class MainFrame extends JFrame {
         add(topMenu, BorderLayout.NORTH);
     }
 
-    private void addLeftMenu() {
+    private void createLeftMenu() {
         leftMenu = new LeftMenu();
 
         leftMenu.setListItemChooseListener(new ListItemChooseListener() {
@@ -71,16 +81,18 @@ public class MainFrame extends JFrame {
             }
         });
 
-        JScrollPane leftMenuScrollPane = new JScrollPane(leftMenu);
+        leftMenuScrollPane = new JScrollPane(leftMenu);
+//        leftMenuScrollPane.setLayout(new BorderLayout());
+//        leftMenuScrollPane.add(leftMenu, BorderLayout.EAST);
         leftMenuScrollPane.setPreferredSize(new Dimension(150, getHeight()));
-        leftMenuScrollPane.getViewport().setBackground(Color.white);
         leftMenuScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(leftMenuScrollPane, BorderLayout.WEST);
+        leftMenuScrollPane.setBorder(BorderFactory.createTitledBorder(".XML"));
     }
 
-    private void addTreeMenu() {
-        JScrollPane treeScrollPane = new JScrollPane(xmlTree);
+    private void createTreeMenu() {
+        xmlTree = new XmlTree();
+        treeScrollPane = new JScrollPane(xmlTree);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(treeScrollPane, BorderLayout.CENTER);
+        treeScrollPane.setBorder(BorderFactory.createTitledBorder("Tree view:"));
     }
 }
