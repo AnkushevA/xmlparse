@@ -53,7 +53,6 @@ public class MainFrame extends JFrame {
 //                xmlTree.drawTree("");
             }
         });
-
         topMenu.setListRefreshListener(new ListRefreshListener() {
             @Override
             public void refreshList(String path) {

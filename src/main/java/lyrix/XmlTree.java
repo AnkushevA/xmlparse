@@ -20,7 +20,7 @@ public class XmlTree extends JPanel{
     private DefaultMutableTreeNode rootNode;
 
     public XmlTree(){
-        drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example.xml");
+        drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example1.xml");
 //        tree = new JTree();
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
@@ -87,8 +87,6 @@ public class XmlTree extends JPanel{
         }
     }
 
-    // If expand is true, expands all nodes in the tree.
-// Otherwise, collapses all nodes in the tree.
     public void expandAll(boolean expand) {
 //        tree.setModel(null);
 
@@ -115,7 +113,7 @@ public class XmlTree extends JPanel{
         }
     }
 
-    private File getFileResource(String fileName)
+    private File getResourceFile(String fileName)
     {
         ClassLoader classLoader = getClass().getClassLoader();
 
