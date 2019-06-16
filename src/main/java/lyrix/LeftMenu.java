@@ -24,8 +24,9 @@ public class LeftMenu extends JPanel {
         itemsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) { //todo добавить обработчик нажатий на список XMl
-                 String selectedValue = (String) itemsList.getSelectedValue();
-                 listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
+                String selectedValue = (String) itemsList.getSelectedValue();
+//                 listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
+                listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
             }
         });
 

@@ -1,5 +1,7 @@
 package lyrix;
 
+import sun.reflect.generics.tree.Tree;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -78,7 +80,8 @@ public class MainFrame extends JFrame {
             @Override
             public void redrawTree(String xmlPath) {
                 //xmlTree.drawTree(xmlPath);
-                JOptionPane.showMessageDialog(null, xmlPath);
+//                JOptionPane.showMessageDialog(null, xmlPath);
+                treeMenu.update(xmlPath);
             }
         });
 

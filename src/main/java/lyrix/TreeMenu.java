@@ -22,6 +22,19 @@ public class TreeMenu extends JPanel {
         add(tree, BorderLayout.CENTER);
     }
 
+    public void update(String xmlPath) {
+        try{
+            DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
+            tree.setModel(new DefaultTreeModel(node));
+        }catch(ParserConfigurationException e){
+            e.printStackTrace();
+        }catch(SAXException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void drawTree(String xmlPath) {
         //tree.setModel(null); //сбросить дерево
         try{
