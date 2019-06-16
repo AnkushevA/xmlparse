@@ -5,7 +5,8 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    private XmlTree xmlTree;
+    private TreeMenu treeMenu;
+//    private XmlTree xmlTree;
     private LeftMenu leftMenu;
     private TopMenu topMenu;
     private StatusBar statusBar;
@@ -49,8 +50,9 @@ public class MainFrame extends JFrame {
         topMenu.setTreeExpandListener(new TreeExpandListener() { //анонимный класс, определяющий интерфейс
             @Override
             public void expandOrCollapseTree(boolean expand) {
-                xmlTree.expandAll(expand);
+//                xmlTree.expandAll(expand);
 //                xmlTree.drawTree("");
+                treeMenu.expandAll(expand);
             }
         });
         topMenu.setListRefreshListener(new ListRefreshListener() {
@@ -89,8 +91,10 @@ public class MainFrame extends JFrame {
     }
 
     private void createTreeMenu() {
-        xmlTree = new XmlTree();
-        treeScrollPane = new JScrollPane(xmlTree);
+//        xmlTree = new XmlTree();
+        treeMenu = new TreeMenu();
+//        treeScrollPane = new JScrollPane(xmlTree);
+        treeScrollPane = new JScrollPane(treeMenu);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Tree view:"));
     }
