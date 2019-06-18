@@ -64,7 +64,6 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
     //вернуть узел
     public Component getTreeCellEditorComponent(final JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row) {
         Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
-
         if (editor instanceof JLabel){
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
             parentPanel.showEditFields(node, tree);

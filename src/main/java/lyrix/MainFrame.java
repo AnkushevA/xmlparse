@@ -34,7 +34,7 @@ public class MainFrame extends JFrame {
     }
 
     private void createNodeEditMenu() {
-        nodeEditMenu = new NodeEditMenu("Anton", "Ankushev", true);
+        nodeEditMenu = new NodeEditMenu();
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
     }
 

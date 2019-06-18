@@ -39,27 +39,7 @@ public class TreeMenu extends JPanel {
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree.setModel(new DefaultTreeModel(node));
-            tree.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent mouseEvent) {
-                    TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
 
-                    if (path != null) {
-                        Object node = path.getLastPathComponent();
-                        if (node instanceof DefaultMutableTreeNode) {
-                            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-                            JOptionPane.showMessageDialog(null, "adssad");
-    //                        String text = (String)JOptionPane.showInputDialog(null, treeNode.getParent().toString() + ":");
-                        }
-                    }
-                   /* if (text != null && !text.equals("")){
-                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-                        treeNode.setUserObject(new TextFieldNode(text));
-                        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-                        model.reload();
-                    }*/
-                }
-            });
         }catch(ParserConfigurationException e){
             e.printStackTrace();
         }catch(SAXException e){
@@ -74,6 +54,27 @@ public class TreeMenu extends JPanel {
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree = new JTree(new DefaultTreeModel(node));
+            /*tree.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent mouseEvent) {
+                    TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
+
+                    if (path != null) {
+                        Object node = path.getLastPathComponent();
+                        if (node instanceof DefaultMutableTreeNode) {
+                            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+                            JOptionPane.showMessageDialog(null, "adssad");
+                            //                        String text = (String)JOptionPane.showInputDialog(null, treeNode.getParent().toString() + ":");
+                        }
+                    }
+                   *//* if (text != null && !text.equals("")){
+                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+                        treeNode.setUserObject(new TextFieldNode(text));
+                        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+                        model.reload();
+                    }*//*
+                }
+            });*/
             CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
             tree.setCellRenderer(renderer);
 

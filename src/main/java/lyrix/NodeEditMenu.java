@@ -3,6 +3,8 @@ package lyrix;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class NodeEditMenu extends JPanel {
     private JLabel nameLabel;
@@ -12,22 +14,30 @@ public class NodeEditMenu extends JPanel {
     private JButton okButton;
     private JButton cancelButton;
     private JPanel southPanel;
+    private DefaultMutableTreeNode node;
 
 
     public void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
         this.nodeEditorListener = nodeEditorListener;
     }
 
-    public NodeEditMenu(String name, String content, boolean checked) {
-        nameLabel = new JLabel(name);
+    public NodeEditMenu() {
+        nameLabel = new JLabel("Node name");
         nameLabel.setFont(nameLabel.getFont().deriveFont(20.0f));
-        dataField = new JTextField(content, 15);
+        dataField = new JTextField(15);
         okButton = new JButton("OK");
 
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (node != null) {
 
+                }
+            }
+        });
 
         cancelButton = new JButton("Cancel");
-        includeToOutput = new JCheckBox("Include to output", checked);
+        includeToOutput = new JCheckBox("Include to output");
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -73,6 +83,7 @@ public class NodeEditMenu extends JPanel {
     }
 
     public void showEditFields(DefaultMutableTreeNode node, JTree tree){
+        this.node = node;
         if (node.isLeaf()){
             String treeNodeString = node.toString();
             int firstClosingBracket = treeNodeString.indexOf("]");
