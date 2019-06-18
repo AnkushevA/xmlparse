@@ -1,20 +1,33 @@
 package lyrix;
 
-import java.awt.*;
-import java.io.*;
-import java.net.URL;
-import java.util.Enumeration;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 
 public class TreeMenu extends JPanel {
     private JTree tree;
+    private NodeEditorListener nodeEditorListener;
+
+    public void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
+        this.nodeEditorListener = nodeEditorListener;
+    }
 
     public TreeMenu() {
         drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example1.xml");
@@ -26,6 +39,27 @@ public class TreeMenu extends JPanel {
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree.setModel(new DefaultTreeModel(node));
+            tree.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent mouseEvent) {
+                    TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
+
+                    if (path != null) {
+                        Object node = path.getLastPathComponent();
+                        if (node instanceof DefaultMutableTreeNode) {
+                            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+                            JOptionPane.showMessageDialog(null, "adssad");
+    //                        String text = (String)JOptionPane.showInputDialog(null, treeNode.getParent().toString() + ":");
+                        }
+                    }
+                   /* if (text != null && !text.equals("")){
+                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+                        treeNode.setUserObject(new TextFieldNode(text));
+                        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+                        model.reload();
+                    }*/
+                }
+            });
         }catch(ParserConfigurationException e){
             e.printStackTrace();
         }catch(SAXException e){
@@ -43,7 +77,7 @@ public class TreeMenu extends JPanel {
             CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
             tree.setCellRenderer(renderer);
 
-            tree.setCellEditor(new CheckBoxNodeEditor(tree));
+            tree.setCellEditor(new CheckBoxNodeEditor(tree, this));
             tree.setEditable(true);
         }catch(ParserConfigurationException e){
             e.printStackTrace();
@@ -82,7 +116,7 @@ public class TreeMenu extends JPanel {
         short type = child.getNodeType();
         if(type == Node.ELEMENT_NODE){
             Element e = (Element)child;
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new CheckBoxNode(e.getTagName(), false));
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new CheckBoxNode("[" + e.getTagName() + "]", false));
             parent.add(node);
 
             if(e.hasChildNodes()){
@@ -99,6 +133,10 @@ public class TreeMenu extends JPanel {
                 parent.add(node);
             }
         }*/
+    }
+
+    public void showEditFields(DefaultMutableTreeNode node, JTree tree){
+        nodeEditorListener.showEditFields(node, tree);
     }
 
     public void expandAll(boolean expand) {

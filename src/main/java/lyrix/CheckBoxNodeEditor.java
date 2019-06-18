@@ -1,5 +1,7 @@
 package lyrix;
 
+import sun.reflect.generics.tree.Tree;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -17,21 +19,27 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
     private boolean isLeaf;
     private JTree tree;
     private CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
+    private TreeMenu parentPanel;
 
-    public CheckBoxNodeEditor(JTree tree) {
+
+    public CheckBoxNodeEditor(JTree tree, TreeMenu parentPanel) {
         this.tree = tree;
+        this.parentPanel = parentPanel;
     }
 
     //возвращает значение, которое находится в узле
     public Object getCellEditorValue() {
-        if (isLeaf) {
+        JLabel textField = renderer.getLeafRenderer();
+        return new TextFieldNode(textField.getText());
+        /*if (isLeaf) {
             JLabel textField = renderer.getLeafRenderer();
             return new TextFieldNode(textField.getText());
         }
-        else {
+
+        else { //проверить все случаи
             JCheckBox checkbox = renderer.getNodeRenderer();
             return new CheckBoxNode(checkbox.getText(), checkbox.isSelected());
-        }
+        }*/
     }
 
     //какие узлы можно редактироватьы
@@ -43,8 +51,9 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
                 Object node = path.getLastPathComponent();
                 if (node instanceof DefaultMutableTreeNode) {
                     DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-                    Object userObject = treeNode.getUserObject();
-                    isLeaf = userObject instanceof TextFieldNode;
+                    if (treeNode.isRoot() || tree.getModel().getIndexOfChild(tree.getModel().getRoot(), treeNode) != -1){
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -56,24 +65,9 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
     public Component getTreeCellEditorComponent(final JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row) {
         Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
 
-        if (editor instanceof JCheckBox) {
-            ((JCheckBox) editor).addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent itemEvent) {
-                    if (stopCellEditing()) {
-                        fireEditingStopped();
-                    }
-                }
-            });
-        }
-        else if (editor instanceof JLabel && leaf){
+        if (editor instanceof JLabel){
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            String text = (String)JOptionPane.showInputDialog(null, node.getParent().toString() + ":");
-            if (text != null && !text.equals("")){
-                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-                treeNode.setUserObject(new TextFieldNode(text));
-                DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-                model.reload();
-            }
+            parentPanel.showEditFields(node, tree);
         }
         return editor;
     }

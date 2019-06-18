@@ -1,6 +1,7 @@
 package lyrix;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
@@ -33,10 +34,8 @@ public class MainFrame extends JFrame {
     }
 
     private void createNodeEditMenu() {
-        nodeEditMenu = new NodeEditMenu();
+        nodeEditMenu = new NodeEditMenu("Anton", "Ankushev", true);
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
-
-
     }
 
     private void addStatusBar() {
@@ -104,6 +103,12 @@ public class MainFrame extends JFrame {
     private void createTreeMenu() {
 //        xmlTree = new XmlTree();
         treeMenu = new TreeMenu();
+        treeMenu.setNodeEditorListener(new NodeEditorListener() {
+            @Override
+            public void showEditFields(DefaultMutableTreeNode node, JTree tree) {
+                nodeEditMenu.showEditFields(node, tree);
+            }
+        });
 //        treeScrollPane = new JScrollPane(xmlTree);
         treeScrollPane = new JScrollPane(treeMenu);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
