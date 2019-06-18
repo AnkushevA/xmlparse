@@ -1,20 +1,19 @@
 package lyrix;
 
-import sun.reflect.generics.tree.Tree;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
 
     private TreeMenu treeMenu;
-//    private XmlTree xmlTree;
     private LeftMenu leftMenu;
     private TopMenu topMenu;
     private StatusBar statusBar;
     private JSplitPane centralSplitMenu;
     private JScrollPane leftMenuScrollPane;
     private JScrollPane treeScrollPane;
+    private NodeEditMenu nodeEditMenu;
+    private JScrollPane nodeEditMenuScrollPane;
 
     public MainFrame() {
         super("Window");
@@ -22,6 +21,7 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         addTopMenu();
+        createNodeEditMenu();
         createTreeMenu();
         createLeftMenu();
         addSplitMenu();
@@ -32,6 +32,13 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+    private void createNodeEditMenu() {
+        nodeEditMenu = new NodeEditMenu();
+        nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
+
+
+    }
+
     private void addStatusBar() {
         statusBar = new StatusBar();
         statusBar.setPreferredSize(new Dimension(getWidth(), 25));
@@ -39,9 +46,11 @@ public class MainFrame extends JFrame {
     }
 
     private void addSplitMenu() {
-        centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftMenuScrollPane, treeScrollPane);
-        centralSplitMenu.setOneTouchExpandable(true);
-        centralSplitMenu.setDividerLocation(150);
+        JSplitPane leftSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftMenuScrollPane, treeScrollPane);
+        leftSplitMenu.setOneTouchExpandable(true);
+        leftSplitMenu.setDividerLocation(150);
+
+        centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitMenu, nodeEditMenuScrollPane);
 
         add(centralSplitMenu, BorderLayout.CENTER);
     }
@@ -75,7 +84,6 @@ public class MainFrame extends JFrame {
 
     private void createLeftMenu() {
         leftMenu = new LeftMenu();
-
         leftMenu.setListItemChooseListener(new ListItemChooseListener() {
             @Override
             public void redrawTree(String xmlPath) {

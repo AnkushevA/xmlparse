@@ -18,9 +18,13 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
     private Color selectionBorderColor, selectionForeground, selectionBackground,
             textForeground, textBackground;
 
-    protected JLabel getLeafRenderer(){return leafRenderer;}
+    protected JLabel getLeafRenderer() {
+        return leafRenderer;
+    }
 
-    protected JCheckBox getNodeRenderer() {return nodeRenderer;}
+    protected JCheckBox getNodeRenderer() {
+        return nodeRenderer;
+    }
 
     //параметры отрисовки
     public CheckBoxNodeRenderer() {
@@ -43,11 +47,11 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                   boolean selected, boolean expanded, boolean leaf, int row,
                                                   boolean hasFocus) {
-        if (((DefaultMutableTreeNode)value).isRoot()){
+        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+        if (treeNode.isRoot() || tree.getModel().getIndexOfChild(tree.getModel().getRoot(), treeNode) != -1) {
             return nonLeafRenderer.getTreeCellRendererComponent(tree,
                     value, selected, expanded, leaf, row, hasFocus);
-        }
-        else if (!leaf) {
+        } /*else if (!leaf) {
             if (selected) {
                 nodeRenderer.setForeground(selectionForeground);
                 nodeRenderer.setBackground(selectionBackground);
@@ -63,16 +67,19 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
                 nodeRenderer.setSelected(node.isSelected());
             }
             return nodeRenderer;
-        } else {
+            }*/
+        else {
             String stringValue = tree.convertValueToText(value, selected, expanded, leaf, row, false);
             leafRenderer.setText(stringValue);
 
-            Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+            Object userObject = treeNode.getUserObject();
             if (userObject instanceof TextFieldNode) {
                 TextFieldNode node = (TextFieldNode) userObject;
                 leafRenderer.setText(node.getText());
             }
             return leafRenderer;
         }
+
+
     }
 }

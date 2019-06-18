@@ -61,7 +61,8 @@ public class TreeMenu extends JPanel {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
         File file = new File(xmlPath); //todo проверить что файл существует
 
         Document document = builder.parse(file);
@@ -77,7 +78,7 @@ public class TreeMenu extends JPanel {
         return node;
     }
 
-    public void addNode(Node child, DefaultMutableTreeNode parent){
+    public void addNode(Node child, DefaultMutableTreeNode parent){ //todo открывается не только корень
         short type = child.getNodeType();
         if(type == Node.ELEMENT_NODE){
             Element e = (Element)child;
@@ -90,14 +91,14 @@ public class TreeMenu extends JPanel {
                     addNode(list.item(i), node);
                 }
             }
-        } else if (type == Node.TEXT_NODE) {
+        } /*else if (type == Node.TEXT_NODE) {
             Text t = (Text)child;
             String textContent = t.getTextContent();
             if (!textContent.contains("\n")) { //todo убирать пробелы к конце xml
                 DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TextFieldNode(textContent));
                 parent.add(node);
             }
-        }
+        }*/
     }
 
     public void expandAll(boolean expand) {

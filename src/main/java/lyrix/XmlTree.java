@@ -15,7 +15,7 @@ import org.xml.sax.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class XmlTree extends JPanel{
-    private JTree tree;
+    /*private JTree tree;
 
     private DefaultMutableTreeNode rootNode;
 
@@ -124,6 +124,6 @@ public class XmlTree extends JPanel{
         } else {
             return new File(resource.getFile());
         }
-    }
+    }*/
 
 }
