@@ -15,8 +15,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -24,6 +22,11 @@ import java.util.Enumeration;
 public class TreeMenu extends JPanel {
     private JTree tree;
     private NodeEditorListener nodeEditorListener;
+
+    public void nodeChanded(DefaultMutableTreeNode node){
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        model.reload();
+    }
 
     public void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
         this.nodeEditorListener = nodeEditorListener;
@@ -117,7 +120,7 @@ public class TreeMenu extends JPanel {
         short type = child.getNodeType();
         if(type == Node.ELEMENT_NODE){
             Element e = (Element)child;
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new CheckBoxNode("[" + e.getTagName() + "]", false));
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TextFieldNode(e.getTagName(), "", true));
             parent.add(node);
 
             if(e.hasChildNodes()){

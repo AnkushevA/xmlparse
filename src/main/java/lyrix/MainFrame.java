@@ -35,6 +35,12 @@ public class MainFrame extends JFrame {
 
     private void createNodeEditMenu() {
         nodeEditMenu = new NodeEditMenu();
+        nodeEditMenu.setUpdateTreeListener(new UpdateTreeListener() {
+            @Override
+            public void updateTree(DefaultMutableTreeNode node) {
+                treeMenu.nodeChanded(node);
+            }
+        });
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
     }
 
@@ -47,9 +53,10 @@ public class MainFrame extends JFrame {
     private void addSplitMenu() {
         JSplitPane leftSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftMenuScrollPane, treeScrollPane);
         leftSplitMenu.setOneTouchExpandable(true);
-        leftSplitMenu.setDividerLocation(150);
+        leftSplitMenu.setDividerLocation(100);
 
         centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitMenu, nodeEditMenuScrollPane);
+        centralSplitMenu.setDividerLocation(550);
 
         add(centralSplitMenu, BorderLayout.CENTER);
     }

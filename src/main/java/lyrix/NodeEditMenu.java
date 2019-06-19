@@ -2,6 +2,7 @@ package lyrix;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,16 +10,14 @@ import java.awt.event.ActionListener;
 public class NodeEditMenu extends JPanel {
     private JLabel nameLabel;
     private JTextField dataField;
-    private NodeEditorListener nodeEditorListener;
     private JCheckBox includeToOutput;
     private JButton okButton;
     private JButton cancelButton;
-    private JPanel southPanel;
     private DefaultMutableTreeNode node;
+    private UpdateTreeListener updateTreeListener;
 
-
-    public void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
-        this.nodeEditorListener = nodeEditorListener;
+    public void setUpdateTreeListener(UpdateTreeListener updateTreeListener) {
+        this.updateTreeListener = updateTreeListener;
     }
 
     public NodeEditMenu() {
@@ -31,7 +30,10 @@ public class NodeEditMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (node != null) {
-
+                    TextFieldNode textFieldNode = (TextFieldNode)node.getUserObject();
+                    TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), dataField.getText(), includeToOutput.isSelected());
+                    node.setUserObject(fieldNode);
+                    updateTreeListener.updateTree(node);
                 }
             }
         });
@@ -82,17 +84,30 @@ public class NodeEditMenu extends JPanel {
         add(cancelButton, gc);
     }
 
+
     public void showEditFields(DefaultMutableTreeNode node, JTree tree){
         this.node = node;
         if (node.isLeaf()){
-            String treeNodeString = node.toString();
+            TextFieldNode textFieldNode = (TextFieldNode)node.getUserObject();
+            nameLabel.setText(textFieldNode.getAttribute());
+            dataField.setText(textFieldNode.getText());
+            includeToOutput.setSelected(textFieldNode.isIncluded());
+
+            /*String treeNodeString = textFieldNode.getText();
             int firstClosingBracket = treeNodeString.indexOf("]");
+
             if (firstClosingBracket != -1) {
                 nameLabel.setText(treeNodeString.substring(0, firstClosingBracket + 1));
-                if (treeNodeString.length() != firstClosingBracket + 1){
-                    dataField.setText(treeNodeString.substring(firstClosingBracket + 2));
+                int firstColon = treeNodeString.indexOf(":", firstClosingBracket);
+                if (treeNodeString.length() != firstColon + 1){
+                    dataField.setText(treeNodeString.substring(firstColon + 1));
                 }
-            }
+                else {
+                    dataField.setText("");
+                }
+
+
+            }*/
         }
     }
 

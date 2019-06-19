@@ -29,17 +29,7 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
     //возвращает значение, которое находится в узле
     public Object getCellEditorValue() {
-        JLabel textField = renderer.getLeafRenderer();
-        return new TextFieldNode(textField.getText());
-        /*if (isLeaf) {
-            JLabel textField = renderer.getLeafRenderer();
-            return new TextFieldNode(textField.getText());
-        }
-
-        else { //проверить все случаи
-            JCheckBox checkbox = renderer.getNodeRenderer();
-            return new CheckBoxNode(checkbox.getText(), checkbox.isSelected());
-        }*/
+        return renderer.getObject();
     }
 
     //какие узлы можно редактироватьы
