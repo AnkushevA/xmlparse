@@ -20,7 +20,6 @@ public class LeftMenu extends JPanel {
 
         items = new DefaultListModel();
         itemsList = new JList(items);
-
         itemsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) { //todo добавить обработчик нажатий на список XMl
@@ -29,6 +28,9 @@ public class LeftMenu extends JPanel {
                 listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
             }
         });
+        itemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        itemsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+
 
         add(itemsList);
     }
