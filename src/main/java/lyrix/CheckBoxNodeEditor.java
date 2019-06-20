@@ -15,8 +15,6 @@ import java.util.EventObject;
 
 
 class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
-
-    private boolean isLeaf;
     private JTree tree;
     private CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
     private TreeMenu parentPanel;
@@ -47,10 +45,6 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
                             return true;
                         }
                     }
-                    /*if (treeNode.isRoot() || tree.getModel().getIndexOfChild(tree.getModel().getRoot(), treeNode) != -1){
-                        return false;
-                    }
-*/
                     return false;
                 }
             }

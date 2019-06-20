@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
     private JScrollPane nodeEditMenuScrollPane;
 
     public MainFrame() {
-        super("Window");
+        super("WSDL loader");
 
         setLayout(new BorderLayout());
 
@@ -35,12 +35,12 @@ public class MainFrame extends JFrame {
 
     private void createNodeEditMenu() {
         nodeEditMenu = new NodeEditMenu();
-        nodeEditMenu.setUpdateTreeListener(new UpdateTreeListener() {
+        /*nodeEditMenu.setUpdateTreeListener(new UpdateTreeListener() {
             @Override
             public void updateTree(DefaultMutableTreeNode node) {
                 treeMenu.nodeChanded(node);
             }
-        });
+        });*/
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
     }
 
@@ -56,7 +56,7 @@ public class MainFrame extends JFrame {
         leftSplitMenu.setDividerLocation(100);
 
         centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitMenu, nodeEditMenuScrollPane);
-        centralSplitMenu.setDividerLocation(550);
+        centralSplitMenu.setDividerLocation(450);
 
         add(centralSplitMenu, BorderLayout.CENTER);
     }

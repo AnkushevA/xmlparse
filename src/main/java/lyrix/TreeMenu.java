@@ -53,31 +53,9 @@ public class TreeMenu extends JPanel {
     }
 
     public void drawTree(String xmlPath) {
-        //tree.setModel(null); //сбросить дерево
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree = new JTree(new DefaultTreeModel(node));
-            /*tree.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent mouseEvent) {
-                    TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
-
-                    if (path != null) {
-                        Object node = path.getLastPathComponent();
-                        if (node instanceof DefaultMutableTreeNode) {
-                            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-                            JOptionPane.showMessageDialog(null, "adssad");
-                            //                        String text = (String)JOptionPane.showInputDialog(null, treeNode.getParent().toString() + ":");
-                        }
-                    }
-                   *//* if (text != null && !text.equals("")){
-                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-                        treeNode.setUserObject(new TextFieldNode(text));
-                        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-                        model.reload();
-                    }*//*
-                }
-            });*/
             CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
             tree.setCellRenderer(renderer);
 
@@ -129,14 +107,7 @@ public class TreeMenu extends JPanel {
                     addNode(list.item(i), node);
                 }
             }
-        } /*else if (type == Node.TEXT_NODE) {
-            Text t = (Text)child;
-            String textContent = t.getTextContent();
-            if (!textContent.contains("\n")) { //todo убирать пробелы к конце xml
-                DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TextFieldNode(textContent));
-                parent.add(node);
-            }
-        }*/
+        }
     }
 
     public void showEditFields(DefaultMutableTreeNode node, JTree tree){
@@ -149,7 +120,6 @@ public class TreeMenu extends JPanel {
     }
 
     private void expandAll(TreePath parent, boolean expand) {
-        // Traverse children
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
             for (Enumeration e = node.children(); e.hasMoreElements();) {
@@ -158,7 +128,6 @@ public class TreeMenu extends JPanel {
                 expandAll(path, expand);
             }
         }
-        // Expansion or collapse must be done bottom-up
         if (expand) {
             tree.expandPath(parent);
         } else {
