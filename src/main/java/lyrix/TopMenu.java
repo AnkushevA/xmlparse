@@ -16,10 +16,10 @@ public class TopMenu extends JPanel implements ActionListener {
 
     private TreeExpandListener treeExpandListener;
     private ListRefreshListener listRefreshListener;
-    private StatusbarListener statusbarListener;
+//    private StatusbarListener statusbarListener;
     private MakeXMLListener makeXMLListener;
 
-    public TopMenu(){
+    TopMenu(){
         expandTreeButton = new JButton("Развернуть дерево");
         collapseTreeButton = new JButton("Свернуть дерево");
         chooseFolderButton = new JButton("Выберите папку");
@@ -38,21 +38,21 @@ public class TopMenu extends JPanel implements ActionListener {
         add(makeXMLButton);
     }
 
-    public void setMakeXMLListener(MakeXMLListener makeXMLListener) {
+    void setMakeXMLListener(MakeXMLListener makeXMLListener) {
         this.makeXMLListener = makeXMLListener;
     }
 
-    public void setTreeExpandListener(TreeExpandListener treeExpandListener){
+    void setTreeExpandListener(TreeExpandListener treeExpandListener){
         this.treeExpandListener = treeExpandListener;
     }
 
-    public void setListRefreshListener(ListRefreshListener listRefreshListener) {
+    void setListRefreshListener(ListRefreshListener listRefreshListener) {
         this.listRefreshListener = listRefreshListener;
     }
 
-    public void setStatusbarListener(StatusbarListener statusbarListener) {
+    /*public void setStatusbarListener(StatusbarListener statusbarListener) {
         this.statusbarListener = statusbarListener;
-    }
+    }*/
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
@@ -76,24 +76,15 @@ public class TopMenu extends JPanel implements ActionListener {
         JFileChooser fileChooser = new JFileChooser();
 
         fileChooser.setDialogTitle("Выбор директории");
-        // Определение режима - только каталог
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-//        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml", "XML");
-//        fileChooser.setFileFilter(filter);
         File workingDirectory = new File(System.getProperty("user.dir"));
         fileChooser.setCurrentDirectory(workingDirectory);
 
         int result = fileChooser.showOpenDialog(this);
 
-        // Если директория выбрана
         if (result == JFileChooser.APPROVE_OPTION ){
             String path = fileChooser.getSelectedFile().getAbsolutePath();
             listRefreshListener.refreshList(path);
-        }
-        else{
-//            statusbarListener.changeStatus("Выберите папку.");
-//            JOptionPane.showMessageDialog(null, "Выберите папку.");
         }
     }
 }

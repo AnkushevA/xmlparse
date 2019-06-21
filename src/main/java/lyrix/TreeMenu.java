@@ -1,21 +1,26 @@
 package lyrix;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.*;
+import javax.xml.soap.Text;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -29,31 +34,27 @@ public class TreeMenu extends JPanel {
         model.reload();
     }
 
-    public void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
+    void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
         this.nodeEditorListener = nodeEditorListener;
     }
 
-    public TreeMenu() {
+    TreeMenu() {
         drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example1.xml");
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
     }
 
-    public void update(String xmlPath) {
+    void update(String xmlPath) {
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree.setModel(new DefaultTreeModel(node));
 
-        }catch(ParserConfigurationException e){
-            e.printStackTrace();
-        }catch(SAXException e){
-            e.printStackTrace();
-        }catch(IOException e){
+        }catch(ParserConfigurationException | SAXException | IOException e){
             e.printStackTrace();
         }
     }
 
-    public void drawTree(String xmlPath) {
+    private void drawTree(String xmlPath) {
         try{
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree = new JTree(new DefaultTreeModel(node));
@@ -62,11 +63,7 @@ public class TreeMenu extends JPanel {
 
             tree.setCellEditor(new CheckBoxNodeEditor(tree, this));
             tree.setEditable(true);
-        }catch(ParserConfigurationException e){
-            e.printStackTrace();
-        }catch(SAXException e){
-            e.printStackTrace();
-        }catch(IOException e){
+        }catch(ParserConfigurationException | SAXException | IOException e){
             e.printStackTrace();
         }
 
@@ -95,7 +92,7 @@ public class TreeMenu extends JPanel {
         return node;
     }
 
-    public void addNode(Node child, DefaultMutableTreeNode parent){ //todo открывается не только корень
+    private void addNode(Node child, DefaultMutableTreeNode parent){ //todo открывается не только корень
         short type = child.getNodeType();
         if(type == Node.ELEMENT_NODE){
             Element e = (Element)child;
@@ -111,11 +108,11 @@ public class TreeMenu extends JPanel {
         }
     }
 
-    public void showEditFields(DefaultMutableTreeNode node, JTree tree){
+    void showEditFields(DefaultMutableTreeNode node, JTree tree){
         nodeEditorListener.showEditFields(node, tree);
     }
 
-    public void expandAll(boolean expand) {
+    void expandAll(boolean expand) {
         TreeNode root = (TreeNode) tree.getModel().getRoot();
         expandAll(new TreePath(root), expand);
     }
@@ -136,7 +133,94 @@ public class TreeMenu extends JPanel {
         }
     }
 
-    public void makeXML() {
+    void makeXML() {
+        try {
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage soapMsg = factory.createMessage();
+            SOAPPart part = soapMsg.getSOAPPart();
 
+            SOAPEnvelope envelope = part.getEnvelope();
+//            SOAPHeader header = envelope.getHeader();
+            SOAPBody body = envelope.getBody();
+
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+            int childCount = root.getChildCount();
+
+            for (int i = 0; i < childCount; i++) {
+                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (tree.getModel().getChild(root, i));
+                TextFieldNode userObject = (TextFieldNode) treeNode.getUserObject();
+                if (userObject.getAttribute().toLowerCase().contains("body")) {
+                    if (!treeNode.isLeaf()) {
+                        TreeModel treeModel = tree.getModel();
+                        int count = treeNode.getChildCount();
+                        for (int j = 0; j < count; j++) {
+                            DefaultMutableTreeNode bodyChild = (DefaultMutableTreeNode) (treeModel.getChild(treeNode, j));
+                            SOAPBodyElement element = body.addBodyElement(envelope.createName(userObject.getAttribute()));
+                            addChildXMLNode(element, bodyChild);
+                        }
+                    }
+                }
+            }
+            soapMsg.writeTo(System.out);
+            FileOutputStream fOut = new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml");
+            soapMsg.writeTo(fOut);
+        } catch (SOAPException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void addChildXMLNode(SOAPElement parent, DefaultMutableTreeNode node) {
+        TextFieldNode textFieldNode = (TextFieldNode) node.getUserObject();
+        if (textFieldNode.isIncluded()) {
+            SOAPElement soapElement = null;
+            try {
+                soapElement = parent.addChildElement(textFieldNode.getAttribute()).addTextNode(textFieldNode.getText());
+            } catch (SOAPException e) {
+                e.printStackTrace();
+            }
+            if (!node.isLeaf()) {
+                TreeModel treeModel = tree.getModel();
+                int childCount = node.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(node, i));
+                    addChildXMLNode(soapElement, treeNode);
+                }
+            }
+        }
+    }
+
+    void createSoapMessage() {
+        try{
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage soapMsg = factory.createMessage();
+            SOAPPart part = soapMsg.getSOAPPart();
+
+            SOAPEnvelope envelope = part.getEnvelope();
+            SOAPHeader header = envelope.getHeader();
+            SOAPBody body = envelope.getBody();
+
+//            header.addTextNode("Training Details");
+
+            SOAPBodyElement element = body.addBodyElement(envelope.createName("JAVA", "training", "https://jitendrazaa.com/blog"));
+            element.addChildElement("WS").addTextNode("Training on Web service");
+
+            SOAPBodyElement element1 = body.addBodyElement(envelope.createName("JAVA", "training", "https://jitendrazaa.com/blog"));
+            element1.addChildElement("Spring").addTextNode("Training on Spring 3.0");
+
+            soapMsg.writeTo(System.out);
+
+            FileOutputStream fOut = new FileOutputStream("SoapMessage.xml");
+            soapMsg.writeTo(fOut);
+
+            System.out.println();
+            System.out.println("SOAP msg created");
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

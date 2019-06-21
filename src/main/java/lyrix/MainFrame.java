@@ -2,15 +2,9 @@ package lyrix;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.xml.namespace.QName;
 import java.awt.*;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
 
-public class MainFrame extends JFrame {
+class MainFrame extends JFrame {
 
     private TreeMenu treeMenu;
     private LeftMenu leftMenu;
@@ -22,7 +16,7 @@ public class MainFrame extends JFrame {
     private NodeEditMenu nodeEditMenu;
     private JScrollPane nodeEditMenuScrollPane;
 
-    public MainFrame() {
+    MainFrame() {
         super("WSDL loader");
 
         setLayout(new BorderLayout());
@@ -83,12 +77,12 @@ public class MainFrame extends JFrame {
                 leftMenu.refreshMenu(path);
             }
         });
-        topMenu.setStatusbarListener(new StatusbarListener() {
+        /*topMenu.setStatusbarListener(new StatusbarListener() {
             @Override
             public void changeStatus(String message) {
                 statusBar.refreshStatus(message);
             }
-        });
+        });*/
         topMenu.setMakeXMLListener(new MakeXMLListener() {
             @Override
             public void makeXML() {

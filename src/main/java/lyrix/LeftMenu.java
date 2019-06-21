@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-public class LeftMenu extends JPanel {
+class LeftMenu extends JPanel {
 
     private JList itemsList;
     private DefaultListModel items;
@@ -17,7 +17,7 @@ public class LeftMenu extends JPanel {
 
     private ListItemChooseListener listItemChooseListener;
 
-    public LeftMenu(){
+    LeftMenu(){
         menuFiles = new HashMap<>();
 
         items = new DefaultListModel();
@@ -41,11 +41,11 @@ public class LeftMenu extends JPanel {
         add(itemsList);
     }
 
-    public void setListItemChooseListener(ListItemChooseListener listItemChooseListener) {
+    void setListItemChooseListener(ListItemChooseListener listItemChooseListener) {
         this.listItemChooseListener = listItemChooseListener;
     }
 
-    public void refreshMenu(String path) {
+    void refreshMenu(String path) {
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -55,9 +55,9 @@ public class LeftMenu extends JPanel {
         items.removeAllElements();
         menuFiles.clear();
 
-        for (int i = 0; i < listOfFiles.length; i++) {
-            menuFiles.put(listOfFiles[i].getName(), listOfFiles[i].getAbsolutePath());
-            items.addElement(listOfFiles[i].getName());
+        for (File listOfFile : listOfFiles) {
+            menuFiles.put(listOfFile.getName(), listOfFile.getAbsolutePath());
+            items.addElement(listOfFile.getName());
 //            System.out.println("File " + listOfFiles[i].getName());
         }
     }

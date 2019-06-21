@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class NodeEditMenu extends JPanel {
+class NodeEditMenu extends JPanel {
     private JLabel nameLabel;
     private JTextField dataField;
     private JCheckBox includeToOutput;
@@ -22,7 +22,7 @@ public class NodeEditMenu extends JPanel {
     private DefaultListModel model;
     private ExpandTreeAfterChangeListener expandTreeAfterChangeListener;
 
-    public void setExpandTreeAfterChangeListener(ExpandTreeAfterChangeListener expandTreeAfterChangeListener) {
+    void setExpandTreeAfterChangeListener(ExpandTreeAfterChangeListener expandTreeAfterChangeListener) {
         this.expandTreeAfterChangeListener = expandTreeAfterChangeListener;
     }
 
@@ -31,7 +31,7 @@ public class NodeEditMenu extends JPanel {
         expandTreeAfterChangeListener.expandTree();
     }
 
-    public NodeEditMenu() {
+    NodeEditMenu() {
         nameLabel = new JLabel("Node name");
         nameLabel.setFont(nameLabel.getFont().deriveFont(20.0f));
         dataField = new JTextField(15);
@@ -132,7 +132,7 @@ public class NodeEditMenu extends JPanel {
         setLeafEditPanel();
     }
 
-    public void showEditFields(DefaultMutableTreeNode node, JTree tree){
+    void showEditFields(DefaultMutableTreeNode node, JTree tree){
         this.node = node;
         this.tree = tree;
         Object object = node.getUserObject();
@@ -148,7 +148,7 @@ public class NodeEditMenu extends JPanel {
             for (int i = 0; i < childCount; i++) {
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(node, i));
                 Object userObject = treeNode.getUserObject();
-                if (userObject instanceof TextFieldNode) {
+                if (userObject instanceof TextFieldNode) { //todo нужна ли проверка?
 //                    nodeElements.add(treeNode);
                     TextFieldNode childNode = (TextFieldNode) userObject;
                     model.addElement(childNode.getDefaultString());
