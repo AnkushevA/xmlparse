@@ -2,7 +2,13 @@ package lyrix;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.namespace.QName;
 import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
@@ -26,22 +32,23 @@ public class MainFrame extends JFrame {
         createTreeMenu();
         createLeftMenu();
         addSplitMenu();
-        addStatusBar();
 
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
+
     private void createNodeEditMenu() {
         nodeEditMenu = new NodeEditMenu();
-        /*nodeEditMenu.setUpdateTreeListener(new UpdateTreeListener() {
+        nodeEditMenu.setExpandTreeAfterChangeListener(new ExpandTreeAfterChangeListener() {
             @Override
-            public void updateTree(DefaultMutableTreeNode node) {
-                treeMenu.nodeChanded(node);
+            public void expandTree() {
+                treeMenu.expandAll(true);
             }
-        });*/
+        });
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
+        nodeEditMenuScrollPane.setBorder(BorderFactory.createTitledBorder("Info"));
     }
 
     private void addStatusBar() {
@@ -67,8 +74,6 @@ public class MainFrame extends JFrame {
         topMenu.setTreeExpandListener(new TreeExpandListener() { //анонимный класс, определяющий интерфейс
             @Override
             public void expandOrCollapseTree(boolean expand) {
-//                xmlTree.expandAll(expand);
-//                xmlTree.drawTree("");
                 treeMenu.expandAll(expand);
             }
         });
@@ -78,11 +83,16 @@ public class MainFrame extends JFrame {
                 leftMenu.refreshMenu(path);
             }
         });
-
         topMenu.setStatusbarListener(new StatusbarListener() {
             @Override
             public void changeStatus(String message) {
                 statusBar.refreshStatus(message);
+            }
+        });
+        topMenu.setMakeXMLListener(new MakeXMLListener() {
+            @Override
+            public void makeXML() {
+                treeMenu.makeXML();
             }
         });
         add(topMenu, BorderLayout.NORTH);
@@ -93,22 +103,17 @@ public class MainFrame extends JFrame {
         leftMenu.setListItemChooseListener(new ListItemChooseListener() {
             @Override
             public void redrawTree(String xmlPath) {
-                //xmlTree.drawTree(xmlPath);
-//                JOptionPane.showMessageDialog(null, xmlPath);
                 treeMenu.update(xmlPath);
             }
         });
 
         leftMenuScrollPane = new JScrollPane(leftMenu);
-//        leftMenuScrollPane.setLayout(new BorderLayout());
-//        leftMenuScrollPane.add(leftMenu, BorderLayout.EAST);
         leftMenuScrollPane.setPreferredSize(new Dimension(150, getHeight()));
         leftMenuScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         leftMenuScrollPane.setBorder(BorderFactory.createTitledBorder(".XML"));
     }
 
     private void createTreeMenu() {
-//        xmlTree = new XmlTree();
         treeMenu = new TreeMenu();
         treeMenu.setNodeEditorListener(new NodeEditorListener() {
             @Override
@@ -116,7 +121,6 @@ public class MainFrame extends JFrame {
                 nodeEditMenu.showEditFields(node, tree);
             }
         });
-//        treeScrollPane = new JScrollPane(xmlTree);
         treeScrollPane = new JScrollPane(treeMenu);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Tree view:"));

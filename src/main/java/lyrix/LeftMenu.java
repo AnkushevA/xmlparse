@@ -5,6 +5,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class LeftMenu extends JPanel {
@@ -22,15 +24,19 @@ public class LeftMenu extends JPanel {
         itemsList = new JList(items);
         itemsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent mouseEvent) { //todo добавить обработчик нажатий на список XMl
+            public void mouseClicked(MouseEvent mouseEvent) {
                 String selectedValue = (String) itemsList.getSelectedValue();
-//                 listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
-                listItemChooseListener.redrawTree(menuFiles.get(selectedValue));
+                String path = menuFiles.get(selectedValue);
+                if (Files.notExists(Paths.get(path))) {
+                    JOptionPane.showMessageDialog(null, String.format("%s doesn't exist!", path));
+                }
+                else {
+                    listItemChooseListener.redrawTree(path);
+                }
             }
         });
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         itemsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-
 
         add(itemsList);
     }

@@ -41,9 +41,16 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
                     DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
                     if (treeNode.getUserObject() instanceof TextFieldNode) {
                         TextFieldNode textFieldNode = (TextFieldNode)treeNode.getUserObject();
-                        if (textFieldNode.getAttribute().contains("fields") || textFieldNode.getAttribute().contains("accessLevels") || treeNode.isLeaf()){
+                        if (treeNode.isRoot() || tree.getModel().getIndexOfChild(tree.getModel().getRoot(), treeNode) != -1) {
+                            return false;
+                        }
+                        else{
                             return true;
                         }
+
+                       /* if (textFieldNode.getAttribute().contains("fields") || textFieldNode.getAttribute().contains("accessLevels") || treeNode.isLeaf()){
+                            return true;
+                        }*/
                     }
                     return false;
                 }

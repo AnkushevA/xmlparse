@@ -11,29 +11,35 @@ public class TopMenu extends JPanel implements ActionListener {
     private JButton expandTreeButton;
     private JButton collapseTreeButton;
     private JButton chooseFolderButton;
-
+    private JButton makeXMLButton;
 //    private JButton clearTree;
 
     private TreeExpandListener treeExpandListener;
     private ListRefreshListener listRefreshListener;
     private StatusbarListener statusbarListener;
-
-
+    private MakeXMLListener makeXMLListener;
 
     public TopMenu(){
         expandTreeButton = new JButton("Развернуть дерево");
         collapseTreeButton = new JButton("Свернуть дерево");
         chooseFolderButton = new JButton("Выберите папку");
+        makeXMLButton = new JButton("Создать XML");
 
         expandTreeButton.addActionListener(this);
         collapseTreeButton.addActionListener(this);
         chooseFolderButton.addActionListener(this);
+        makeXMLButton.addActionListener(this);
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
         add(expandTreeButton);
         add(collapseTreeButton);
         add(chooseFolderButton);
+        add(makeXMLButton);
+    }
+
+    public void setMakeXMLListener(MakeXMLListener makeXMLListener) {
+        this.makeXMLListener = makeXMLListener;
     }
 
     public void setTreeExpandListener(TreeExpandListener treeExpandListener){
@@ -60,6 +66,8 @@ public class TopMenu extends JPanel implements ActionListener {
             }
             else if (buttonClicked == chooseFolderButton){
                 chooseFolder();
+            }else if (buttonClicked == makeXMLButton){
+                makeXMLListener.makeXML();
             }
         }
     }

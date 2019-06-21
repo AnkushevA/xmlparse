@@ -35,6 +35,10 @@ public class TextFieldNode {
         this.text = text;
     }
 
+    public String getDefaultString() {
+        return String.format("[%s]:%s", attribute, text);
+    }
+
     @Override
     public String toString() {
         String output = (include ? "<font color='green'>[" + attribute + "]:</font>" : "<font color='red'>[" + attribute + "]:</font>") + text;

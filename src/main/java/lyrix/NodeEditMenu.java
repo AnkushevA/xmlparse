@@ -4,12 +4,9 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class NodeEditMenu extends JPanel {
     private JLabel nameLabel;
@@ -18,20 +15,20 @@ public class NodeEditMenu extends JPanel {
     private JButton okButton;
     private JButton addButton;
     private JButton removeButton;
+    private JList itemsList;
     private DefaultMutableTreeNode node;
     private JTree tree;
     private TextFieldNode textFieldNode;
-//    private UpdateTreeListener updateTreeListener;
-    private JList itemsList;
     private DefaultListModel model;
-    private ArrayList<DefaultMutableTreeNode> nodeElements;
-    /*
-    public void setUpdateTreeListener(UpdateTreeListener updateTreeListener) {
-        this.updateTreeListener = updateTreeListener;
-    }*/
+    private ExpandTreeAfterChangeListener expandTreeAfterChangeListener;
+
+    public void setExpandTreeAfterChangeListener(ExpandTreeAfterChangeListener expandTreeAfterChangeListener) {
+        this.expandTreeAfterChangeListener = expandTreeAfterChangeListener;
+    }
 
     private void updateTreeModel(){
         ((DefaultTreeModel) tree.getModel()).reload();
+        expandTreeAfterChangeListener.expandTree();
     }
 
     public NodeEditMenu() {
@@ -46,16 +43,28 @@ public class NodeEditMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (node != null) {
-                    TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
-                    node.setUserObject(fieldNode);
-                    if (textFieldNode.getAttribute().equals("car:MName")) {
-                        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
-                        if (temp.getUserObject() instanceof TextFieldNode) {
-                            ((TextFieldNode)temp.getUserObject()).setText(dataField.getText());
+                    if (textFieldNode.getAttribute().equals("car:accessLevels") || textFieldNode.getAttribute().equals("car:fields") || node.isLeaf()) {
+                        TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
+                        textFieldNode = fieldNode;
+                        node.setUserObject(fieldNode);
+                        if (textFieldNode.getAttribute().equals("car:MName")) {
+                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
+                            if (temp.getUserObject() instanceof TextFieldNode) {
+                                ((TextFieldNode)temp.getUserObject()).setText(dataField.getText());
+                            }
+                        }
+                        else if (textFieldNode.getAttribute().equals("car:primaryID")) {
+                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
+                            if (temp.getUserObject() instanceof TextFieldNode) {
+                                TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
+                                if (itemNode.getAttribute().equals("car:item")) {
+                                    itemNode.setText(dataField.getText());
+                                }
+                            }
                         }
                     }
+                    makeNodeEnabled(node, includeToOutput.isSelected());
                     updateTreeModel();
-                    //updateTreeListener.updateTree(node);
                 }
             }
         });
@@ -65,15 +74,36 @@ public class NodeEditMenu extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (node != null) {
                     if (textFieldNode.getAttribute().contains("fields")){
-                        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(new TextFieldNode("car:item", "", true));
+                        TextFieldNode fieldToAdd = new TextFieldNode("car:item", "", true);
+                        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:MName", "", true)));
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:MLabel", "", true)));
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:MType", "", true)));
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:subType", "", true)));
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:MValue", "", true)));
                         node.add(nodeToAdd);
+                        makeNodeEnabled(nodeToAdd, ((TextFieldNode)node.getUserObject()).isIncluded());
                         updateTreeModel();
-                        model.addElement("car:item");
+                        model.addElement(fieldToAdd.getDefaultString());
+                    }
+                    else if (textFieldNode.getAttribute().contains("accessLevels")){
+                        TextFieldNode fieldToAdd = new TextFieldNode("car:item", "", true);
+                        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
+
+                        DefaultMutableTreeNode idNode = new DefaultMutableTreeNode(new TextFieldNode("car:id", "", true));
+                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("car:additionalID", "", true)));
+                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("car:primaryID", "", true)));
+                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("car:systemID", "", true)));
+
+                        nodeToAdd.add(idNode);
+
+                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("car:label", "", true)));
+
+                        makeNodeEnabled(nodeToAdd, ((TextFieldNode)node.getUserObject()).isIncluded());
+
+                        node.add(nodeToAdd);
+                        updateTreeModel();
+                        model.addElement(fieldToAdd.getDefaultString());
                     }
                 }
             }
@@ -109,11 +139,8 @@ public class NodeEditMenu extends JPanel {
         textFieldNode = (TextFieldNode) object;
         includeToOutput.setSelected(textFieldNode.isIncluded());
         nameLabel.setText(textFieldNode.getAttribute());
-        if (node.isLeaf()){
-            setLeafEditPanel();
-            dataField.setText(textFieldNode.getText());
-        }
-        else {
+
+        if (textFieldNode.getAttribute().equals("car:accessLevels") || textFieldNode.getAttribute().equals("car:fields")){
             setListEditPanel();
             TreeModel treeModel = tree.getModel();
             model.removeAllElements();
@@ -124,8 +151,31 @@ public class NodeEditMenu extends JPanel {
                 if (userObject instanceof TextFieldNode) {
 //                    nodeElements.add(treeNode);
                     TextFieldNode childNode = (TextFieldNode) userObject;
-                    model.addElement(childNode.getAttribute());
+                    model.addElement(childNode.getDefaultString());
                 }
+            }
+        }
+        else if (node.isLeaf()){
+            setLeafEditPanel();
+            dataField.setText(textFieldNode.getText());
+        }
+        else {
+            setDefaultEditPanel();
+            includeToOutput.setSelected(textFieldNode.isIncluded());
+            nameLabel.setText(textFieldNode.getAttribute());
+        }
+
+    }
+
+    private void makeNodeEnabled(DefaultMutableTreeNode node, boolean enable) {
+        TextFieldNode leafNode = (TextFieldNode) node.getUserObject();
+        leafNode.setIncluded(enable);
+        updateTreeModel();
+        if (!node.isLeaf()){
+            TreeModel treeModel = tree.getModel();
+            int childCount = treeModel.getChildCount(node);
+            for (int i = 0; i < childCount; i++) {
+                makeNodeEnabled((DefaultMutableTreeNode)(treeModel.getChild(node, i)), enable);
             }
         }
     }
@@ -135,6 +185,28 @@ public class NodeEditMenu extends JPanel {
             remove(component);
             revalidate();
         }
+    }
+
+    private void setDefaultEditPanel(){
+        removeComponents();
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.gridy = 0;
+        gc.weightx = 1;
+        gc.anchor = GridBagConstraints.CENTER;
+        add(nameLabel, gc);
+
+        gc.gridy = 1;
+        gc.weightx = 1;
+        gc.anchor = GridBagConstraints.CENTER;
+        add(includeToOutput, gc);
+
+        gc.gridy = 2;
+        gc.weighty = 1;
+        gc.weightx = 1;
+        gc.anchor = GridBagConstraints.PAGE_START;
+        add(okButton, gc);
+        repaint();
     }
 
     private void setLeafEditPanel() {
@@ -196,10 +268,9 @@ public class NodeEditMenu extends JPanel {
         gc.gridx = 1;
         gc.gridy = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
-//        gc.anchor = GridBagConstraints.PAGE_START;
         JScrollPane scrollPane = new JScrollPane(itemsList);
-        scrollPane.setPreferredSize(new Dimension(200,120));
         add(scrollPane, gc);
+        scrollPane.setPreferredSize(new Dimension(200,120));
 
         gc.gridwidth = 1;
         gc.weighty = 1;

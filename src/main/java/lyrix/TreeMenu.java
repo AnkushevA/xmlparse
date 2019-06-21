@@ -23,6 +23,7 @@ public class TreeMenu extends JPanel {
     private JTree tree;
     private NodeEditorListener nodeEditorListener;
 
+
     public void nodeChanded(DefaultMutableTreeNode node){
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         model.reload();
@@ -79,7 +80,7 @@ public class TreeMenu extends JPanel {
         DocumentBuilder builder = factory.newDocumentBuilder();
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
-        File file = new File(xmlPath); //todo проверить что файл существует
+        File file = new File(xmlPath);
 
         Document document = builder.parse(file);
         Element e = document.getDocumentElement();
@@ -133,5 +134,9 @@ public class TreeMenu extends JPanel {
         } else {
             tree.collapsePath(parent);
         }
+    }
+
+    public void makeXML() {
+
     }
 }
