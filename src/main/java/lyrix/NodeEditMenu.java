@@ -49,7 +49,8 @@ class NodeEditMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (node != null) {
-                    if (textFieldNode.getAttribute().contains("fields")){
+                    String atribute = textFieldNode.getAttribute().toLowerCase();
+                    if (atribute.contains("fields")){
                         TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
                         DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
                         nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MName", "", true)));
@@ -62,7 +63,7 @@ class NodeEditMenu extends JPanel {
                         updateTreeModel();
                         model.addElement(fieldToAdd.getDefaultString());
                     }
-                    else if (textFieldNode.getAttribute().contains("accessLevels")){
+                    else if (atribute.contains("accessLevels")){
                         TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
                         DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
 

@@ -9,7 +9,6 @@ class MainFrame extends JFrame {
     private TreeMenu treeMenu;
     private LeftMenu leftMenu;
     private TopMenu topMenu;
-    private StatusBar statusBar;
     private JSplitPane centralSplitMenu;
     private JScrollPane leftMenuScrollPane;
     private JScrollPane treeScrollPane;
@@ -31,7 +30,6 @@ class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
-
 
     void expandTree(boolean expand) {
         treeMenu.expandAll(expand);
@@ -57,12 +55,6 @@ class MainFrame extends JFrame {
         nodeEditMenu = new NodeEditMenu(this);
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
         nodeEditMenuScrollPane.setBorder(BorderFactory.createTitledBorder("Info"));
-    }
-
-    private void addStatusBar() {
-        statusBar = new StatusBar();
-        statusBar.setPreferredSize(new Dimension(getWidth(), 25));
-        add(statusBar, BorderLayout.SOUTH);
     }
 
     private void addSplitMenu() {
