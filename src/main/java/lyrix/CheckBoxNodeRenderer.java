@@ -7,25 +7,15 @@ import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
 class CheckBoxNodeRenderer implements TreeCellRenderer {
-    //для листьев, объект, который будет отрисован
     private JLabel leafRenderer = new JLabel();
 
     private Object object;
-    //для других элементов
-    private DefaultTreeCellRenderer nonLeafRenderer = new DefaultTreeCellRenderer();
 
-    /*private Color selectionBorderColor, selectionForeground, selectionBackground,
-            textForeground, textBackground;*/
+    private DefaultTreeCellRenderer nonLeafRenderer = new DefaultTreeCellRenderer();
 
     public Object getObject() {
         return object;
     }
-
-    public JLabel getLeafRenderer() {
-        return leafRenderer;
-    }
-
-    //параметры отрисовки
 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                   boolean selected, boolean expanded, boolean leaf, int row,

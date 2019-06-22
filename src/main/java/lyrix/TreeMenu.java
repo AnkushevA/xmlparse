@@ -8,15 +8,16 @@ import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -67,7 +68,7 @@ public class TreeMenu extends JPanel {
     }
 
     private DefaultMutableTreeNode buildTree(String xmlPath) throws ParserConfigurationException, SAXException, IOException {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("root"); //корень дерева
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("XML"); //корень дерева
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -88,7 +89,7 @@ public class TreeMenu extends JPanel {
         return node;
     }
 
-    private void addNode(Node child, DefaultMutableTreeNode parent) { //todo открывается не только корень
+    private void addNode(Node child, DefaultMutableTreeNode parent) {
         short type = child.getNodeType();
         if (type == Node.ELEMENT_NODE) {
             Element e = (Element) child;
@@ -164,10 +165,24 @@ public class TreeMenu extends JPanel {
                     }
                 }
             }
-            soapMsg.writeTo(System.out);
-            FileOutputStream fOut = new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml");
-            soapMsg.writeTo(fOut);
-        } catch (SOAPException | IOException e) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            soapMsg.writeTo(out);
+            String strMsg = new String(out.toByteArray());
+
+            Source xmlInput = new StreamSource(new StringReader(strMsg));
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.transform(xmlInput,
+                    new StreamResult(new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml")));
+
+        } catch (SOAPException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
@@ -176,25 +191,27 @@ public class TreeMenu extends JPanel {
         TextFieldNode childTextFieldNode = (TextFieldNode) childNode.getUserObject();
         if (childTextFieldNode.isIncluded()) {
             SOAPElement soapElement = null;
-            try {
-                if (parent instanceof SOAPBody){
-                    soapElement = ((SOAPBody) parent).addBodyElement(envelope.createName(childTextFieldNode.getAttribute()));
-                } else{
-                    soapElement = parent.addChildElement (childTextFieldNode.getAttribute(), "car");
-                }
-            } catch (SOAPException e) {
-                e.printStackTrace();
-            }
+
             if (childNode.isLeaf()) {
                 if (!childTextFieldNode.getText().isEmpty()) {
                     try {
+                        soapElement =  parent.addChildElement(childTextFieldNode.getAttribute(), "car");
                         soapElement.addTextNode(childTextFieldNode.getText());
                     } catch (SOAPException e) {
                         e.printStackTrace();
                     }
                 }
-            }
-            else {
+            } else {
+                try {
+                    if (parent instanceof SOAPBody) {
+                        soapElement = ((SOAPBody) parent).addBodyElement(envelope.createName(childTextFieldNode.getAttribute()));
+                    } else {
+                        soapElement = parent.addChildElement(childTextFieldNode.getAttribute(), "car");
+                    }
+                } catch (SOAPException e) {
+                    e.printStackTrace();
+                }
+
                 TreeModel treeModel = tree.getModel();
                 int childCount = childNode.getChildCount();
                 for (int i = 0; i < childCount; i++) {
