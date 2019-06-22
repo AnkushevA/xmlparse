@@ -11,27 +11,27 @@ import java.util.HashMap;
 
 class LeftMenu extends JPanel {
 
-    private JList itemsList;
-    private DefaultListModel items;
+    private final MainFrame mainFrame;
+    private JList<String> itemsList;
+    private DefaultListModel<String> items;
     private HashMap<String, String> menuFiles;
 
-    private ListItemChooseListener listItemChooseListener;
-
-    LeftMenu(){
+    LeftMenu(final MainFrame mainFrame){
+        this.mainFrame = mainFrame;
         menuFiles = new HashMap<>();
 
-        items = new DefaultListModel();
-        itemsList = new JList(items);
+        items = new DefaultListModel<>();
+        itemsList = new JList<>(items);
         itemsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                String selectedValue = (String) itemsList.getSelectedValue();
+                String selectedValue = itemsList.getSelectedValue();
                 String path = menuFiles.get(selectedValue);
                 if (Files.notExists(Paths.get(path))) {
                     JOptionPane.showMessageDialog(null, String.format("%s doesn't exist!", path));
                 }
                 else {
-                    listItemChooseListener.redrawTree(path);
+                    mainFrame.redrawTree(path);
                 }
             }
         });
@@ -39,10 +39,6 @@ class LeftMenu extends JPanel {
         itemsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 
         add(itemsList);
-    }
-
-    void setListItemChooseListener(ListItemChooseListener listItemChooseListener) {
-        this.listItemChooseListener = listItemChooseListener;
     }
 
     void refreshMenu(String path) {
@@ -55,10 +51,11 @@ class LeftMenu extends JPanel {
         items.removeAllElements();
         menuFiles.clear();
 
-        for (File listOfFile : listOfFiles) {
-            menuFiles.put(listOfFile.getName(), listOfFile.getAbsolutePath());
-            items.addElement(listOfFile.getName());
-//            System.out.println("File " + listOfFiles[i].getName());
+        if (listOfFiles != null) {
+            for (File listOfFile : listOfFiles) {
+                menuFiles.put(listOfFile.getName(), listOfFile.getAbsolutePath());
+                items.addElement(listOfFile.getName());
+            }
         }
     }
 

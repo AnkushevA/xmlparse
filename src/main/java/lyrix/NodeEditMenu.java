@@ -9,67 +9,43 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class NodeEditMenu extends JPanel {
+    private final MainFrame mainFrame;
     private JLabel nameLabel;
     private JTextField dataField;
     private JCheckBox includeToOutput;
     private JButton okButton;
     private JButton addButton;
     private JButton removeButton;
-    private JList itemsList;
+    private JList<String> itemsList;
     private DefaultMutableTreeNode node;
     private JTree tree;
     private TextFieldNode textFieldNode;
-    private DefaultListModel model;
-    private ExpandTreeAfterChangeListener expandTreeAfterChangeListener;
-
-    void setExpandTreeAfterChangeListener(ExpandTreeAfterChangeListener expandTreeAfterChangeListener) {
-        this.expandTreeAfterChangeListener = expandTreeAfterChangeListener;
-    }
+    private DefaultListModel<String> model;
 
     private void updateTreeModel(){
         ((DefaultTreeModel) tree.getModel()).reload();
-        expandTreeAfterChangeListener.expandTree();
+        mainFrame.expandTree(true);
     }
 
-    NodeEditMenu() {
+    NodeEditMenu(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         nameLabel = new JLabel("Node name");
         nameLabel.setFont(nameLabel.getFont().deriveFont(20.0f));
         dataField = new JTextField(15);
-        okButton = new JButton("OK");
-        addButton = new JButton("+");
-        removeButton = new JButton("-");
 
-        okButton.addActionListener(new ActionListener() {
+        removeButton = ButtonFactory.makeButton("-", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (node != null) {
-                    if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
-                        TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
-                        textFieldNode = fieldNode;
-                        node.setUserObject(fieldNode);
-                        if (textFieldNode.getAttribute().equals("MName")) {
-                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
-                            if (temp.getUserObject() instanceof TextFieldNode) {
-                                ((TextFieldNode)temp.getUserObject()).setText(dataField.getText());
-                            }
-                        }
-                        else if (textFieldNode.getAttribute().equals("primaryID")) {
-                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
-                            if (temp.getUserObject() instanceof TextFieldNode) {
-                                TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
-                                if (itemNode.getAttribute().equals("item")) {
-                                    itemNode.setText(dataField.getText());
-                                }
-                            }
-                        }
-                    }
-                    makeNodeEnabled(node, includeToOutput.isSelected());
+                int[] selectedItems = itemsList.getSelectedIndices();
+                if (selectedItems.length == 1){
+                    node.remove(selectedItems[0]);
                     updateTreeModel();
+                    model.removeElementAt(selectedItems[0]);
                 }
             }
         });
 
-        addButton.addActionListener(new ActionListener() {
+        addButton = ButtonFactory.makeButton("+", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (node != null) {
@@ -109,22 +85,41 @@ class NodeEditMenu extends JPanel {
             }
         });
 
-        removeButton.addActionListener(new ActionListener() {
+        okButton = ButtonFactory.makeButton("OK", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int[] selectedItems = itemsList.getSelectedIndices();
-                if (selectedItems.length == 1){
-                    node.remove(selectedItems[0]);
+                if (node != null) {
+                    if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
+                        TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
+                        textFieldNode = fieldNode;
+                        node.setUserObject(fieldNode);
+                        if (textFieldNode.getAttribute().equals("MName")) {
+                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
+                            if (temp.getUserObject() instanceof TextFieldNode) {
+                                ((TextFieldNode)temp.getUserObject()).setText(dataField.getText());
+                            }
+                        }
+                        else if (textFieldNode.getAttribute().equals("primaryID")) {
+                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
+                            if (temp.getUserObject() instanceof TextFieldNode) {
+                                TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
+                                if (itemNode.getAttribute().equals("item")) {
+                                    itemNode.setText(dataField.getText());
+                                }
+                            }
+                        }
+                    }
+                    makeNodeEnabled(node, includeToOutput.isSelected());
                     updateTreeModel();
-                    model.removeElementAt(selectedItems[0]);
                 }
             }
         });
 
+
         includeToOutput = new JCheckBox("Enabled");
 
-        model = new DefaultListModel();
-        itemsList = new JList(model);
+        model = new DefaultListModel<>();
+        itemsList = new JList<>(model);
 
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         itemsList.setVisibleRowCount(-1);

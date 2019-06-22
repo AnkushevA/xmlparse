@@ -6,29 +6,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class TopMenu extends JPanel implements ActionListener {
+class TopMenu extends JPanel{
 
-    private JButton expandTreeButton;
-    private JButton collapseTreeButton;
-    private JButton chooseFolderButton;
-    private JButton makeXMLButton;
-//    private JButton clearTree;
+    private final MainFrame mainFrame;
 
-    private TreeExpandListener treeExpandListener;
-    private ListRefreshListener listRefreshListener;
-//    private StatusbarListener statusbarListener;
-    private MakeXMLListener makeXMLListener;
+    TopMenu(final MainFrame mainFrame){
+        this.mainFrame = mainFrame;
+        JButton expandTreeButton = ButtonFactory.makeButton("Развернуть дерево", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.expandTree(true);
+            }
+        });
 
-    TopMenu(){
-        expandTreeButton = new JButton("Развернуть дерево");
-        collapseTreeButton = new JButton("Свернуть дерево");
-        chooseFolderButton = new JButton("Выберите папку");
-        makeXMLButton = new JButton("Создать XML");
+        JButton collapseTreeButton = ButtonFactory.makeButton("Свернуть дерево", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.expandTree(false);
+            }
+        });
 
-        expandTreeButton.addActionListener(this);
-        collapseTreeButton.addActionListener(this);
-        chooseFolderButton.addActionListener(this);
-        makeXMLButton.addActionListener(this);
+        JButton chooseFolderButton = ButtonFactory.makeButton("Выберите папку", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                chooseFolder();
+            }
+        });
+
+        JButton makeXMLButton = ButtonFactory.makeButton("Создать XML", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.makeXML();
+            }
+        });
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
@@ -36,40 +46,6 @@ public class TopMenu extends JPanel implements ActionListener {
         add(collapseTreeButton);
         add(chooseFolderButton);
         add(makeXMLButton);
-    }
-
-    void setMakeXMLListener(MakeXMLListener makeXMLListener) {
-        this.makeXMLListener = makeXMLListener;
-    }
-
-    void setTreeExpandListener(TreeExpandListener treeExpandListener){
-        this.treeExpandListener = treeExpandListener;
-    }
-
-    void setListRefreshListener(ListRefreshListener listRefreshListener) {
-        this.listRefreshListener = listRefreshListener;
-    }
-
-    /*public void setStatusbarListener(StatusbarListener statusbarListener) {
-        this.statusbarListener = statusbarListener;
-    }*/
-
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        JButton buttonClicked = (JButton)actionEvent.getSource();
-        if (buttonClicked != null) {
-            if (buttonClicked == expandTreeButton){
-                treeExpandListener.expandOrCollapseTree(true);
-            }
-            else if (buttonClicked == collapseTreeButton){
-                treeExpandListener.expandOrCollapseTree(false);
-            }
-            else if (buttonClicked == chooseFolderButton){
-                chooseFolder();
-            }else if (buttonClicked == makeXMLButton){
-                makeXMLListener.makeXML();
-            }
-        }
     }
 
     private void chooseFolder(){
@@ -84,7 +60,7 @@ public class TopMenu extends JPanel implements ActionListener {
 
         if (result == JFileChooser.APPROVE_OPTION ){
             String path = fileChooser.getSelectedFile().getAbsolutePath();
-            listRefreshListener.refreshList(path);
+            mainFrame.refreshList(path);
         }
     }
 }

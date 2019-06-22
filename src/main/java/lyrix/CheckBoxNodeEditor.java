@@ -47,10 +47,6 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
                         else{
                             return true;
                         }
-
-                       /* if (textFieldNode.getAttribute().contains("fields") || textFieldNode.getAttribute().contains("accessLevels") || treeNode.isLeaf()){
-                            return true;
-                        }*/
                     }
                     return false;
                 }

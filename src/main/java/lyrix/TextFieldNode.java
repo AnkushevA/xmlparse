@@ -5,13 +5,13 @@ public class TextFieldNode {
     private String text;
     private boolean include;
 
-    public TextFieldNode(String attribute, String text, boolean include) {
+    TextFieldNode(String attribute, String text, boolean include) {
         this.attribute = attribute.substring(attribute.indexOf(":") + 1);
         this.text = text;
         this.include = include;
     }
 
-    public String getAttribute() {
+    String getAttribute() {
         return attribute;
     }
 
@@ -19,23 +19,23 @@ public class TextFieldNode {
         this.attribute = attribute;
     }
 
-    public boolean isIncluded() {
+    boolean isIncluded() {
         return include;
     }
 
-    public void setIncluded(boolean include) {
+    void setIncluded(boolean include) {
         this.include = include;
     }
 
-    public String getText() {
+    String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    void setText(String text) {
         this.text = text;
     }
 
-    public String getDefaultString() {
+    String getDefaultString() {
         return String.format("[%s]:%s", attribute, text);
     }
 

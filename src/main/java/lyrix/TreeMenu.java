@@ -13,7 +13,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.*;
 import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
@@ -21,21 +20,12 @@ import java.io.*;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-public class TreeMenu extends JPanel {
+class TreeMenu extends JPanel {
     private JTree tree;
-    private NodeEditorListener nodeEditorListener;
+    private final MainFrame mainFrame;
 
-
-    public void nodeChanded(DefaultMutableTreeNode node) {
-        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        model.reload();
-    }
-
-    void setNodeEditorListener(NodeEditorListener nodeEditorListener) {
-        this.nodeEditorListener = nodeEditorListener;
-    }
-
-    TreeMenu() {
+    TreeMenu(final MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example1.xml");
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
@@ -63,8 +53,6 @@ public class TreeMenu extends JPanel {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private DefaultMutableTreeNode buildTree(String xmlPath) throws ParserConfigurationException, SAXException, IOException {
@@ -106,7 +94,7 @@ public class TreeMenu extends JPanel {
     }
 
     void showEditFields(DefaultMutableTreeNode node, JTree tree) {
-        nodeEditorListener.showEditFields(node, tree);
+        mainFrame.showEditFields(node, tree);
     }
 
     void expandAll(boolean expand) {

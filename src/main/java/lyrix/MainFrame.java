@@ -33,14 +33,28 @@ class MainFrame extends JFrame {
     }
 
 
+    void expandTree(boolean expand) {
+        treeMenu.expandAll(expand);
+    }
+
+    void refreshList(String path) {
+        leftMenu.refreshMenu(path);
+    }
+
+    void makeXML() {
+        treeMenu.makeXML();
+    }
+
+    void redrawTree(String xmlPath) {
+        treeMenu.update(xmlPath);
+    }
+
+    void showEditFields(DefaultMutableTreeNode node, JTree tree) {
+        nodeEditMenu.showEditFields(node, tree);
+    }
+
     private void createNodeEditMenu() {
-        nodeEditMenu = new NodeEditMenu();
-        nodeEditMenu.setExpandTreeAfterChangeListener(new ExpandTreeAfterChangeListener() {
-            @Override
-            public void expandTree() {
-                treeMenu.expandAll(true);
-            }
-        });
+        nodeEditMenu = new NodeEditMenu(this);
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
         nodeEditMenuScrollPane.setBorder(BorderFactory.createTitledBorder("Info"));
     }
@@ -63,43 +77,13 @@ class MainFrame extends JFrame {
     }
 
     private void addTopMenu() {
-        topMenu = new TopMenu();
+        topMenu = new TopMenu(this);
 
-        topMenu.setTreeExpandListener(new TreeExpandListener() { //анонимный класс, определяющий интерфейс
-            @Override
-            public void expandOrCollapseTree(boolean expand) {
-                treeMenu.expandAll(expand);
-            }
-        });
-        topMenu.setListRefreshListener(new ListRefreshListener() {
-            @Override
-            public void refreshList(String path) {
-                leftMenu.refreshMenu(path);
-            }
-        });
-        /*topMenu.setStatusbarListener(new StatusbarListener() {
-            @Override
-            public void changeStatus(String message) {
-                statusBar.refreshStatus(message);
-            }
-        });*/
-        topMenu.setMakeXMLListener(new MakeXMLListener() {
-            @Override
-            public void makeXML() {
-                treeMenu.makeXML();
-            }
-        });
         add(topMenu, BorderLayout.NORTH);
     }
 
     private void createLeftMenu() {
-        leftMenu = new LeftMenu();
-        leftMenu.setListItemChooseListener(new ListItemChooseListener() {
-            @Override
-            public void redrawTree(String xmlPath) {
-                treeMenu.update(xmlPath);
-            }
-        });
+        leftMenu = new LeftMenu(this);
 
         leftMenuScrollPane = new JScrollPane(leftMenu);
         leftMenuScrollPane.setPreferredSize(new Dimension(150, getHeight()));
@@ -108,13 +92,7 @@ class MainFrame extends JFrame {
     }
 
     private void createTreeMenu() {
-        treeMenu = new TreeMenu();
-        treeMenu.setNodeEditorListener(new NodeEditorListener() {
-            @Override
-            public void showEditFields(DefaultMutableTreeNode node, JTree tree) {
-                nodeEditMenu.showEditFields(node, tree);
-            }
-        });
+        treeMenu = new TreeMenu(this);
         treeScrollPane = new JScrollPane(treeMenu);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Tree view:"));

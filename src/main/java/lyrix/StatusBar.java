@@ -9,7 +9,7 @@ public class StatusBar extends JPanel {
 
     private JLabel statusLabel;
 
-    public StatusBar() {
+    StatusBar() {
         setBorder(new BevelBorder(BevelBorder.LOWERED));
         setLayout(new FlowLayout(FlowLayout.LEFT));
         statusLabel = new JLabel("status");
