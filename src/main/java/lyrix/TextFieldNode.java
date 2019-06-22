@@ -6,7 +6,7 @@ public class TextFieldNode {
     private boolean include;
 
     public TextFieldNode(String attribute, String text, boolean include) {
-        this.attribute = attribute;
+        this.attribute = attribute.substring(attribute.indexOf(":") + 1);
         this.text = text;
         this.include = include;
     }
