@@ -10,7 +10,7 @@ public class SendRequestPanel extends JPanel {
     public SendRequestPanel(String xmlString, SendRequestFrame sendRequestFrame) {
         this.sendRequestFrame = sendRequestFrame;
         setLayout(new BorderLayout());
-        requestTextArea = new JTextArea(30, 20);
+        requestTextArea = new JTextArea(30, 30);
         requestTextArea.setLineWrap(true);
         requestTextArea.setEditable(false);
         requestTextArea.setWrapStyleWord(true);

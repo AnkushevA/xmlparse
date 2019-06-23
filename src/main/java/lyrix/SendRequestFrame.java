@@ -14,9 +14,8 @@ public class SendRequestFrame extends JFrame {
         getRequestPanel = new GetRequestPanel(this);
 
         setSize(800, 800);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         centralSplitMenu = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sendRequestPanel, getRequestPanel);
-        centralSplitMenu.setDividerLocation(450);
+        centralSplitMenu.setDividerLocation(300);
         add(centralSplitMenu, BorderLayout.CENTER);
     }
 

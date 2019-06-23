@@ -17,15 +17,10 @@ class NodeEditMenu extends JPanel {
     private JList<String> itemsList;
     private DefaultMutableTreeNode node;
     private JTree tree;
-    private TextFieldNode textFieldNode;
     private DefaultListModel<String> model;
 
-    private void updateTreeModel(){
-        ((DefaultTreeModel) tree.getModel()).reload();
-        mainFrame.expandTree(true);
-    }
-
-    NodeEditMenu(MainFrame mainFrame) {
+    NodeEditMenu(MainFrame mainFrame, JTree tree) {
+        this.tree = tree;
         this.mainFrame = mainFrame;
         nameLabel = new JLabel("Node name");
         nameLabel.setFont(nameLabel.getFont().deriveFont(20.0f));
@@ -42,31 +37,22 @@ class NodeEditMenu extends JPanel {
 
         addButton = ButtonFactory.makeButton("+", actionEvent -> {
             if (node != null) {
-                String attribute = textFieldNode.getAttribute().toLowerCase();
-                if (attribute.contains("fields")) {
-                    TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
-                    DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MName", "", true)));
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MLabel", "", true)));
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MType", "", true)));
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("subType", "", true)));
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MValue", "", true)));
-                    node.add(nodeToAdd);
-                    makeNodeEnabled(nodeToAdd, ((TextFieldNode) node.getUserObject()).isIncluded());
-                    updateTreeModel();
-                    model.addElement(fieldToAdd.getDefaultString());
-                } else if (attribute.contains("accesslevels")) {
-                    TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
-                    DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
-                    DefaultMutableTreeNode idNode = new DefaultMutableTreeNode(new TextFieldNode("id", "", true));
-                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("additionalID", "", true)));
-                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("primaryID", "", true)));
-                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("systemID", "", true)));
-                    nodeToAdd.add(idNode);
-                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("label", "", true)));
-                    makeNodeEnabled(nodeToAdd, ((TextFieldNode) node.getUserObject()).isIncluded());
-                    node.add(nodeToAdd);
-                    updateTreeModel();
+                TextFieldNode textFieldNode = ((TextFieldNode) node.getUserObject());
+                String attribute = textFieldNode.getAttribute();
+                boolean isEnabled = ((TextFieldNode) node.getUserObject()).isIncluded();
+
+                TextFieldNode fieldToAdd = new TextFieldNode("item", "", isEnabled);
+                DefaultMutableTreeNode nodeToAdd = null;
+
+                if (attribute.equals("fields")) {
+                    nodeToAdd = makeFieldsNode(fieldToAdd, isEnabled);
+                } else if (attribute.equals("accessLevels")) {
+                    nodeToAdd = makeAccessLevelsNode(fieldToAdd, isEnabled);
+                }
+
+                if (nodeToAdd != null) {
+                    DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
+                    treeModel.insertNodeInto(nodeToAdd, node, node.getChildCount());
                     model.addElement(fieldToAdd.getDefaultString());
                 }
             }
@@ -74,27 +60,24 @@ class NodeEditMenu extends JPanel {
 
         okButton = ButtonFactory.makeButton("OK", actionEvent -> {
             if (node != null) {
+                TextFieldNode textFieldNode = ((TextFieldNode) node.getUserObject());
                 if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
                     TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
-                    textFieldNode = fieldNode;
                     node.setUserObject(fieldNode);
                     if (textFieldNode.getAttribute().equals("MName")) {
                         DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
-                        if (temp.getUserObject() instanceof TextFieldNode) {
-                            ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
-                        }
+                        ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
                     } else if (textFieldNode.getAttribute().equals("primaryID")) {
                         DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
-                        if (temp.getUserObject() instanceof TextFieldNode) {
-                            TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
-                            if (itemNode.getAttribute().equals("item")) {
-                                itemNode.setText(dataField.getText());
-                            }
+                        TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
+                        if (itemNode.getAttribute().equals("item")) {
+                            itemNode.setText(dataField.getText());
                         }
                     }
                 }
                 makeNodeEnabled(node, includeToOutput.isSelected());
                 updateTreeModel();
+
             }
         });
         includeToOutput = new JCheckBox("Enabled");
@@ -106,11 +89,35 @@ class NodeEditMenu extends JPanel {
         setLeafEditPanel();
     }
 
-    void showEditFields(DefaultMutableTreeNode node, JTree tree){
+    private void updateTreeModel() {
+        ((DefaultTreeModel) tree.getModel()).reload();
+        mainFrame.expandTree(true);
+    }
+
+    private DefaultMutableTreeNode makeFieldsNode(TextFieldNode fieldToAdd, boolean isEnabled) {
+        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MName", "", isEnabled)));
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MLabel", "", isEnabled)));
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MType", "", isEnabled)));
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("subType", "", isEnabled)));
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MValue", "", isEnabled)));
+        return nodeToAdd;
+    }
+
+    private DefaultMutableTreeNode makeAccessLevelsNode(TextFieldNode fieldToAdd, boolean isEnabled) {
+        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
+        DefaultMutableTreeNode idNode = new DefaultMutableTreeNode(new TextFieldNode("id", "", isEnabled));
+        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("additionalID", "", isEnabled)));
+        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("primaryID", "", isEnabled)));
+        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("systemID", "", isEnabled)));
+        nodeToAdd.add(idNode);
+        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("label", "", isEnabled)));
+        return nodeToAdd;
+    }
+
+    void showEditFields(DefaultMutableTreeNode node) {
         this.node = node;
-        this.tree = tree;
-        Object object = node.getUserObject();
-        textFieldNode = (TextFieldNode) object;
+        TextFieldNode textFieldNode = (TextFieldNode) node.getUserObject();
         includeToOutput.setSelected(textFieldNode.isIncluded());
         nameLabel.setText(textFieldNode.getAttribute());
 
@@ -141,7 +148,6 @@ class NodeEditMenu extends JPanel {
     private void makeNodeEnabled(DefaultMutableTreeNode node, boolean enable) {
         TextFieldNode leafNode = (TextFieldNode) node.getUserObject();
         leafNode.setIncluded(enable);
-        updateTreeModel();
         if (!node.isLeaf()){
             TreeModel treeModel = tree.getModel();
             int childCount = treeModel.getChildCount(node);

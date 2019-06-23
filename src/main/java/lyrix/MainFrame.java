@@ -23,8 +23,8 @@ class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         addTopMenu();
-        createNodeEditMenu();
         createTreeMenu();
+        createNodeEditMenu();
         createLeftMenu();
         addSplitMenu();
         setSize(800, 700);
@@ -46,7 +46,7 @@ class MainFrame extends JFrame {
 
     void redrawTree(String xmlPath) {
         if (Files.exists(Paths.get(xmlPath))) {
-            treeMenu.updateTree(xmlPath);
+            treeMenu.drawTree(xmlPath);
         }
     }
 
@@ -59,12 +59,12 @@ class MainFrame extends JFrame {
         sendRequestFrame.setVisible(true);
     }
 
-    void showEditFields(DefaultMutableTreeNode node, JTree tree) {
-        nodeEditMenu.showEditFields(node, tree);
+    void showEditFields(DefaultMutableTreeNode node) {
+        nodeEditMenu.showEditFields(node);
     }
 
     private void createNodeEditMenu() {
-        nodeEditMenu = (NodeEditMenu) PanelFactory.createPanel("NodeEditMenu", this);
+        nodeEditMenu = new NodeEditMenu(this, treeMenu.getTree());
         nodeEditMenuScrollPane = new JScrollPane(nodeEditMenu);
         nodeEditMenuScrollPane.setBorder(BorderFactory.createTitledBorder("Info"));
     }
@@ -81,12 +81,12 @@ class MainFrame extends JFrame {
     }
 
     private void addTopMenu() {
-        topMenu = (TopMenu) PanelFactory.createPanel("TopMenu", this);
+        topMenu = new TopMenu(this);
         add(topMenu, BorderLayout.NORTH);
     }
 
     private void createLeftMenu() {
-        leftMenu = (LeftMenu) PanelFactory.createPanel("LeftMenu", this);
+        leftMenu = new LeftMenu(this);
         leftMenuScrollPane = new JScrollPane(leftMenu);
         leftMenuScrollPane.setPreferredSize(new Dimension(150, getHeight()));
         leftMenuScrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -94,7 +94,7 @@ class MainFrame extends JFrame {
     }
 
     private void createTreeMenu() {
-        treeMenu = (TreeMenu) PanelFactory.createPanel("TreeMenu", this);
+        treeMenu = new TreeMenu(this);
         treeScrollPane = new JScrollPane(treeMenu);
         treeScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         treeScrollPane.setBorder(BorderFactory.createTitledBorder("Tree view:"));

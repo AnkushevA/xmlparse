@@ -26,74 +26,72 @@ class TreeMenu extends JPanel {
 
     TreeMenu(final MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        tree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode("Root")));
+        CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
+        tree.setCellRenderer(renderer);
+        tree.setCellEditor(new CheckBoxNodeEditor(tree, this));
+        tree.setEditable(true);
+
         drawTree("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\example1.xml");
         setLayout(new BorderLayout());
         add(tree, BorderLayout.CENTER);
     }
 
-    void updateTree(String xmlPath) {
+    JTree getTree() {
+        return tree;
+    }
+
+    public void showEditFields(DefaultMutableTreeNode node) {
+        mainFrame.showEditFields(node);
+    }
+
+    void drawTree(String xmlPath) {
         try {
-            DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
-            tree.setModel(new DefaultTreeModel(node));
+            DefaultMutableTreeNode node = getRootNode(xmlPath); //построить дерево
+            DefaultTreeModel treeModel = ((DefaultTreeModel) tree.getModel());
+            treeModel.setRoot(node);
+            treeModel.reload();
+
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            JOptionPane.showMessageDialog(null, "Невозможно отрисовать дерево!");
+            JOptionPane.showMessageDialog(null, "Невозможно отобразить дерево!");
         }
     }
 
-    private void drawTree(String xmlPath) {
-        try {
-            DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
-            tree = new JTree(new DefaultTreeModel(node));
-            CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-            tree.setCellRenderer(renderer);
-
-            tree.setCellEditor(new CheckBoxNodeEditor(tree, this));
-            tree.setEditable(true);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            JOptionPane.showMessageDialog(null, "Невозможно отрисовать дерево!");
-        }
-    }
-
-    private DefaultMutableTreeNode buildTree(String xmlPath) throws ParserConfigurationException, SAXException, IOException {
+    private DefaultMutableTreeNode getRootNode(String xmlPath) throws ParserConfigurationException, SAXException, IOException {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("XML"); //корень дерева
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        File file = new File(xmlPath);
+        DocumentBuilderFactory xmlBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = xmlBuilderFactory.newDocumentBuilder();
+        xmlBuilderFactory.setIgnoringElementContentWhitespace(true);
+        xmlBuilderFactory.setIgnoringComments(true);
+        File xmlFile = new File(xmlPath);
 
-        Document document = builder.parse(file);
-        Element e = document.getDocumentElement();
+        Document xmlDocument = documentBuilder.parse(xmlFile);
+        Element documentElement = xmlDocument.getDocumentElement();
 
-        if (e.hasChildNodes()) {
-            NodeList children = e.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                Node child = children.item(i);
+        if (documentElement.hasChildNodes()) {
+            NodeList childNodes = documentElement.getChildNodes();
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node child = childNodes.item(i);
                 addNode(child, node);
             }
         }
         return node;
     }
 
-    private void addNode(Node child, DefaultMutableTreeNode parent) {
-        short type = child.getNodeType();
-        if (type == Node.ELEMENT_NODE) {
-            Element e = (Element) child;
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TextFieldNode(e.getTagName(), "", true));
-            parent.add(node);
+    private void addNode(Node childNode, DefaultMutableTreeNode parentNode) {
+        if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element documentElement = (Element) childNode;
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TextFieldNode(documentElement.getTagName(), "", true));
+            parentNode.add(node);
 
-            if (e.hasChildNodes()) {
-                NodeList list = e.getChildNodes();
+            if (documentElement.hasChildNodes()) {
+                NodeList list = documentElement.getChildNodes();
                 for (int i = 0; i < list.getLength(); i++) {
                     addNode(list.item(i), node);
                 }
             }
         }
-    }
-
-    void showEditFields(DefaultMutableTreeNode node, JTree tree) {
-        mainFrame.showEditFields(node, tree);
     }
 
     void expandAll(boolean expand) {
@@ -147,7 +145,7 @@ class TreeMenu extends JPanel {
                     int count = treeNode.getChildCount();
                     for (int j = 0; j < count; j++) {
                         DefaultMutableTreeNode bodyChild = (DefaultMutableTreeNode) (treeModel.getChild(treeNode, j));
-                        addChildXMLNode(body, bodyChild, envelope);
+                        addXMLChildNode(body, bodyChild, envelope);
                     }
                 }
             }
@@ -173,7 +171,7 @@ class TreeMenu extends JPanel {
         return "";
     }
 
-    private void addChildXMLNode(SOAPElement parent, DefaultMutableTreeNode childNode, SOAPEnvelope envelope) {
+    private void addXMLChildNode(SOAPElement parent, DefaultMutableTreeNode childNode, SOAPEnvelope envelope) {
         TextFieldNode childTextFieldNode = (TextFieldNode) childNode.getUserObject();
         if (childTextFieldNode.isIncluded()) {
             SOAPElement soapElement = null;
@@ -201,9 +199,11 @@ class TreeMenu extends JPanel {
                 int childCount = childNode.getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(childNode, i));
-                    addChildXMLNode(soapElement, treeNode, envelope);
+                    addXMLChildNode(soapElement, treeNode, envelope);
                 }
             }
         }
     }
+
+
 }
