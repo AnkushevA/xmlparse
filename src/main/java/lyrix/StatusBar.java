@@ -6,7 +6,6 @@ import java.awt.*;
 
 public class StatusBar extends JPanel {
 
-
     private JLabel statusLabel;
 
     StatusBar() {

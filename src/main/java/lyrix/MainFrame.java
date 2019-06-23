@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class MainFrame extends JFrame {
-
+    private SendRequestFrame sendRequestFrame;
     private TreeMenu treeMenu;
     private LeftMenu leftMenu;
     private TopMenu topMenu;
@@ -40,14 +40,23 @@ class MainFrame extends JFrame {
         leftMenu.refreshMenu(path);
     }
 
-    void makeXML() {
-        treeMenu.makeXML();
+    String makeXML() {
+        return treeMenu.makeXML();
     }
 
     void redrawTree(String xmlPath) {
         if (Files.exists(Paths.get(xmlPath))) {
             treeMenu.updateTree(xmlPath);
         }
+    }
+
+    void showXMLRequestWindow(String xmlString) {
+        if (sendRequestFrame == null) {
+            sendRequestFrame = new SendRequestFrame(xmlString);
+            sendRequestFrame.pack();
+        }
+        sendRequestFrame.showText(xmlString);
+        sendRequestFrame.setVisible(true);
     }
 
     void showEditFields(DefaultMutableTreeNode node, JTree tree) {

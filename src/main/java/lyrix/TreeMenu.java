@@ -117,7 +117,7 @@ class TreeMenu extends JPanel {
         }
     }
 
-    void makeXML() {
+    String makeXML() {
         try {
             MessageFactory factory = MessageFactory.newInstance();
             SOAPMessage soapMsg = factory.createMessage();
@@ -154,17 +154,23 @@ class TreeMenu extends JPanel {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             soapMsg.writeTo(out);
             String strMsg = new String(out.toByteArray());
-
+            StreamResult streamResult = new StreamResult(new StringWriter());
             Source xmlInput = new StreamSource(new StringReader(strMsg));
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+/*
             transformer.transform(xmlInput,
                     new StreamResult(new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml")));
-
+*/
+            transformer.transform(xmlInput, streamResult);
+            String xmlResult = streamResult.getWriter().toString();
+//            System.out.println(xmlResult);
+            return xmlResult;
         } catch (SOAPException | IOException | TransformerException e) {
             JOptionPane.showMessageDialog(null, "Невозможно создать XML!");
         }
+        return "";
     }
 
     private void addChildXMLNode(SOAPElement parent, DefaultMutableTreeNode childNode, SOAPEnvelope envelope) {

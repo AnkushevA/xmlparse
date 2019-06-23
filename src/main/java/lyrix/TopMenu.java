@@ -16,7 +16,7 @@ class TopMenu extends JPanel {
 
         JButton chooseFolderButton = ButtonFactory.makeButton("Выберите папку", actionEvent -> chooseFolder());
 
-        JButton makeXMLButton = ButtonFactory.makeButton("Создать XML", actionEvent -> mainFrame.makeXML());
+        JButton makeXMLButton = ButtonFactory.makeButton("Отправить запрос", actionEvent -> mainFrame.showXMLRequestWindow(mainFrame.makeXML()));
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
