@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -43,11 +42,7 @@ class LeftMenu extends JPanel {
 
     void refreshMenu(String path) {
         File folder = new File(path);
-        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".xml");
-            }
-        });
+        File[] listOfFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".xml"));
         items.removeAllElements();
         menuFiles.clear();
 

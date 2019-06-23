@@ -2,43 +2,21 @@ package lyrix;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
-class TopMenu extends JPanel{
+class TopMenu extends JPanel {
 
     private final MainFrame mainFrame;
 
-    TopMenu(final MainFrame mainFrame){
+    TopMenu(final MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        JButton expandTreeButton = ButtonFactory.makeButton("Развернуть дерево", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.expandTree(true);
-            }
-        });
+        JButton expandTreeButton = ButtonFactory.makeButton("Развернуть дерево", actionEvent -> mainFrame.expandTree(true));
 
-        JButton collapseTreeButton = ButtonFactory.makeButton("Свернуть дерево", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.expandTree(false);
-            }
-        });
+        JButton collapseTreeButton = ButtonFactory.makeButton("Свернуть дерево", actionEvent -> mainFrame.expandTree(false));
 
-        JButton chooseFolderButton = ButtonFactory.makeButton("Выберите папку", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                chooseFolder();
-            }
-        });
+        JButton chooseFolderButton = ButtonFactory.makeButton("Выберите папку", actionEvent -> chooseFolder());
 
-        JButton makeXMLButton = ButtonFactory.makeButton("Создать XML", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.makeXML();
-            }
-        });
+        JButton makeXMLButton = ButtonFactory.makeButton("Создать XML", actionEvent -> mainFrame.makeXML());
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
@@ -48,7 +26,7 @@ class TopMenu extends JPanel{
         add(makeXMLButton);
     }
 
-    private void chooseFolder(){
+    private void chooseFolder() {
         JFileChooser fileChooser = new JFileChooser();
 
         fileChooser.setDialogTitle("Выбор директории");
@@ -58,7 +36,7 @@ class TopMenu extends JPanel{
 
         int result = fileChooser.showOpenDialog(this);
 
-        if (result == JFileChooser.APPROVE_OPTION ){
+        if (result == JFileChooser.APPROVE_OPTION) {
             String path = fileChooser.getSelectedFile().getAbsolutePath();
             mainFrame.refreshList(path);
         }

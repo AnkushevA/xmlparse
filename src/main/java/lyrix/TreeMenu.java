@@ -31,13 +31,12 @@ class TreeMenu extends JPanel {
         add(tree, BorderLayout.CENTER);
     }
 
-    void update(String xmlPath) {
+    void updateTree(String xmlPath) {
         try {
             DefaultMutableTreeNode node = buildTree(xmlPath); //построить дерево
             tree.setModel(new DefaultTreeModel(node));
-
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Невозможно отрисовать дерево!");
         }
     }
 
@@ -51,7 +50,7 @@ class TreeMenu extends JPanel {
             tree.setCellEditor(new CheckBoxNodeEditor(tree, this));
             tree.setEditable(true);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Невозможно отрисовать дерево!");
         }
     }
 
@@ -131,7 +130,6 @@ class TreeMenu extends JPanel {
                 envelope.removeNamespaceDeclaration(((String) namespacePrefixes.next()));
             }
 
-//            SOAPHeader header = envelope.getHeader();
             SOAPBody body = envelope.getBody();
 
             soapMsg.getSOAPHeader().setPrefix("soapenv");
@@ -164,14 +162,8 @@ class TreeMenu extends JPanel {
             transformer.transform(xmlInput,
                     new StreamResult(new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml")));
 
-        } catch (SOAPException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
+        } catch (SOAPException | IOException | TransformerException e) {
+            JOptionPane.showMessageDialog(null, "Невозможно создать XML!");
         }
     }
 
@@ -179,25 +171,24 @@ class TreeMenu extends JPanel {
         TextFieldNode childTextFieldNode = (TextFieldNode) childNode.getUserObject();
         if (childTextFieldNode.isIncluded()) {
             SOAPElement soapElement = null;
-
             if (childNode.isLeaf()) {
                 if (!childTextFieldNode.getText().isEmpty()) {
                     try {
                         soapElement =  parent.addChildElement(childTextFieldNode.getAttribute(), "car");
                         soapElement.addTextNode(childTextFieldNode.getText());
                     } catch (SOAPException e) {
-                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Ошибка добавления элемента в XML!");
                     }
                 }
             } else {
                 try {
                     if (parent instanceof SOAPBody) {
-                        soapElement = ((SOAPBody) parent).addBodyElement(envelope.createName(childTextFieldNode.getAttribute()));
+                        soapElement = ((SOAPBody) parent).addBodyElement(envelope.createName(childTextFieldNode.getAttribute(), "car", "http://cardlibrary2.webservices.integration.css.aamsystems.com"));
                     } else {
                         soapElement = parent.addChildElement(childTextFieldNode.getAttribute(), "car");
                     }
                 } catch (SOAPException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Ошибка добавления элемента в XML!");
                 }
 
                 TreeModel treeModel = tree.getModel();

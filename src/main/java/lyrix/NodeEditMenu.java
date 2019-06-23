@@ -5,8 +5,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class NodeEditMenu extends JPanel {
     private final MainFrame mainFrame;
@@ -33,95 +31,75 @@ class NodeEditMenu extends JPanel {
         nameLabel.setFont(nameLabel.getFont().deriveFont(20.0f));
         dataField = new JTextField(15);
 
-        removeButton = ButtonFactory.makeButton("-", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int[] selectedItems = itemsList.getSelectedIndices();
-                if (selectedItems.length == 1){
-                    node.remove(selectedItems[0]);
+        removeButton = ButtonFactory.makeButton("-", actionEvent -> {
+            int[] selectedItems = itemsList.getSelectedIndices();
+            if (selectedItems.length == 1) {
+                node.remove(selectedItems[0]);
+                updateTreeModel();
+                model.removeElementAt(selectedItems[0]);
+            }
+        });
+
+        addButton = ButtonFactory.makeButton("+", actionEvent -> {
+            if (node != null) {
+                String attribute = textFieldNode.getAttribute().toLowerCase();
+                if (attribute.contains("fields")) {
+                    TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
+                    DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MName", "", true)));
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MLabel", "", true)));
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MType", "", true)));
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("subType", "", true)));
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MValue", "", true)));
+                    node.add(nodeToAdd);
+                    makeNodeEnabled(nodeToAdd, ((TextFieldNode) node.getUserObject()).isIncluded());
                     updateTreeModel();
-                    model.removeElementAt(selectedItems[0]);
+                    model.addElement(fieldToAdd.getDefaultString());
+                } else if (attribute.contains("accesslevels")) {
+                    TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
+                    DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
+                    DefaultMutableTreeNode idNode = new DefaultMutableTreeNode(new TextFieldNode("id", "", true));
+                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("additionalID", "", true)));
+                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("primaryID", "", true)));
+                    idNode.add(new DefaultMutableTreeNode(new TextFieldNode("systemID", "", true)));
+                    nodeToAdd.add(idNode);
+                    nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("label", "", true)));
+                    makeNodeEnabled(nodeToAdd, ((TextFieldNode) node.getUserObject()).isIncluded());
+                    node.add(nodeToAdd);
+                    updateTreeModel();
+                    model.addElement(fieldToAdd.getDefaultString());
                 }
             }
         });
 
-        addButton = ButtonFactory.makeButton("+", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (node != null) {
-                    String atribute = textFieldNode.getAttribute().toLowerCase();
-                    if (atribute.contains("fields")){
-                        TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
-                        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MName", "", true)));
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MLabel", "", true)));
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MType", "", true)));
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("subType", "", true)));
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("MValue", "", true)));
-                        node.add(nodeToAdd);
-                        makeNodeEnabled(nodeToAdd, ((TextFieldNode)node.getUserObject()).isIncluded());
-                        updateTreeModel();
-                        model.addElement(fieldToAdd.getDefaultString());
-                    }
-                    else if (atribute.contains("accessLevels")){
-                        TextFieldNode fieldToAdd = new TextFieldNode("item", "", true);
-                        DefaultMutableTreeNode nodeToAdd = new DefaultMutableTreeNode(fieldToAdd);
-
-                        DefaultMutableTreeNode idNode = new DefaultMutableTreeNode(new TextFieldNode("id", "", true));
-                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("additionalID", "", true)));
-                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("primaryID", "", true)));
-                        idNode.add(new DefaultMutableTreeNode(new TextFieldNode("systemID", "", true)));
-
-                        nodeToAdd.add(idNode);
-
-                        nodeToAdd.add(new DefaultMutableTreeNode(new TextFieldNode("label", "", true)));
-
-                        makeNodeEnabled(nodeToAdd, ((TextFieldNode)node.getUserObject()).isIncluded());
-
-                        node.add(nodeToAdd);
-                        updateTreeModel();
-                        model.addElement(fieldToAdd.getDefaultString());
-                    }
-                }
-            }
-        });
-
-        okButton = ButtonFactory.makeButton("OK", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (node != null) {
-                    if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
-                        TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
-                        textFieldNode = fieldNode;
-                        node.setUserObject(fieldNode);
-                        if (textFieldNode.getAttribute().equals("MName")) {
-                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
-                            if (temp.getUserObject() instanceof TextFieldNode) {
-                                ((TextFieldNode)temp.getUserObject()).setText(dataField.getText());
-                            }
+        okButton = ButtonFactory.makeButton("OK", actionEvent -> {
+            if (node != null) {
+                if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
+                    TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
+                    textFieldNode = fieldNode;
+                    node.setUserObject(fieldNode);
+                    if (textFieldNode.getAttribute().equals("MName")) {
+                        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
+                        if (temp.getUserObject() instanceof TextFieldNode) {
+                            ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
                         }
-                        else if (textFieldNode.getAttribute().equals("primaryID")) {
-                            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
-                            if (temp.getUserObject() instanceof TextFieldNode) {
-                                TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
-                                if (itemNode.getAttribute().equals("item")) {
-                                    itemNode.setText(dataField.getText());
-                                }
+                    } else if (textFieldNode.getAttribute().equals("primaryID")) {
+                        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
+                        if (temp.getUserObject() instanceof TextFieldNode) {
+                            TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
+                            if (itemNode.getAttribute().equals("item")) {
+                                itemNode.setText(dataField.getText());
                             }
                         }
                     }
-                    makeNodeEnabled(node, includeToOutput.isSelected());
-                    updateTreeModel();
                 }
+                makeNodeEnabled(node, includeToOutput.isSelected());
+                updateTreeModel();
             }
         });
-
-
         includeToOutput = new JCheckBox("Enabled");
-
         model = new DefaultListModel<>();
         itemsList = new JList<>(model);
-
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         itemsList.setVisibleRowCount(-1);
         setLayout(new GridBagLayout());
@@ -144,11 +122,8 @@ class NodeEditMenu extends JPanel {
             for (int i = 0; i < childCount; i++) {
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(node, i));
                 Object userObject = treeNode.getUserObject();
-                if (userObject instanceof TextFieldNode) { //todo нужна ли проверка?
-//                    nodeElements.add(treeNode);
-                    TextFieldNode childNode = (TextFieldNode) userObject;
-                    model.addElement(childNode.getDefaultString());
-                }
+                TextFieldNode childNode = (TextFieldNode) userObject;
+                model.addElement(childNode.getDefaultString());
             }
         }
         else if (node.isLeaf()){
