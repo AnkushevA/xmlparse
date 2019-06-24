@@ -20,7 +20,7 @@ import java.io.*;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-class TreeMenu extends JPanel {
+class TreeMenu extends JPanel implements LeftMenuUpdateListener {
     private JTree tree;
     private final MainFrame mainFrame;
 
@@ -163,7 +163,6 @@ class TreeMenu extends JPanel {
 */
             transformer.transform(xmlInput, streamResult);
             String xmlResult = streamResult.getWriter().toString();
-//            System.out.println(xmlResult);
             return xmlResult;
         } catch (SOAPException | IOException | TransformerException e) {
             JOptionPane.showMessageDialog(null, "Невозможно создать XML!");
@@ -178,7 +177,7 @@ class TreeMenu extends JPanel {
             if (childNode.isLeaf()) {
                 if (!childTextFieldNode.getText().isEmpty()) {
                     try {
-                        soapElement =  parent.addChildElement(childTextFieldNode.getAttribute(), "car");
+                        soapElement = parent.addChildElement(childTextFieldNode.getAttribute(), "car");
                         soapElement.addTextNode(childTextFieldNode.getText());
                     } catch (SOAPException e) {
                         JOptionPane.showMessageDialog(null, "Ошибка добавления элемента в XML!");
@@ -206,4 +205,9 @@ class TreeMenu extends JPanel {
     }
 
 
+    @Override
+    public void update(String xmlPath) {
+        drawTree(xmlPath);
+        mainFrame.setNodeEditTree(tree);
+    }
 }

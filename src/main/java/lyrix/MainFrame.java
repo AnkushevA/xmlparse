@@ -3,8 +3,7 @@ package lyrix;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 
 class MainFrame extends JFrame {
     private SendRequestFrame sendRequestFrame;
@@ -16,6 +15,9 @@ class MainFrame extends JFrame {
     private JScrollPane treeScrollPane;
     private NodeEditMenu nodeEditMenu;
     private JScrollPane nodeEditMenuScrollPane;
+    private ArrayList<LeftMenuUpdateListener> observers = new ArrayList<>();
+    private String xmlPath;
+
 
     MainFrame() {
         super("WSDL loader");
@@ -30,6 +32,31 @@ class MainFrame extends JFrame {
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        attach(nodeEditMenu);
+        attach(treeMenu);
+    }
+
+    public String getLeftMenuState() {
+        return xmlPath;
+    }
+
+    public void setLeftMenuState(String xmlPath) {
+        this.xmlPath = xmlPath;
+        notifyAllObservers();
+    }
+
+    public void attach(LeftMenuUpdateListener leftMenuUpdateListener) {
+        observers.add(leftMenuUpdateListener);
+    }
+
+    private void notifyAllObservers() {
+        for (LeftMenuUpdateListener leftMenuUpdateListener : observers) {
+            leftMenuUpdateListener.update(xmlPath);
+        }
+    }
+
+    void setNodeEditTree(JTree nodeEditTree) {
+        nodeEditMenu.setTree(nodeEditTree);
     }
 
     void expandTree(boolean expand) {
@@ -45,9 +72,7 @@ class MainFrame extends JFrame {
     }
 
     void redrawTree(String xmlPath) {
-        if (Files.exists(Paths.get(xmlPath))) {
-            treeMenu.drawTree(xmlPath);
-        }
+        treeMenu.drawTree(xmlPath);
     }
 
     void showXMLRequestWindow(String xmlString) {

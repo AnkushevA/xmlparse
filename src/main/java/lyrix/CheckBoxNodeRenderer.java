@@ -25,8 +25,7 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
             object = value;
             return nonLeafRenderer.getTreeCellRendererComponent(tree,
                     value, selected, expanded, leaf, row, hasFocus);
-        }
-        else {
+        } else {
             Object userObject = treeNode.getUserObject();
             TextFieldNode node = (TextFieldNode) userObject;
             object = node;

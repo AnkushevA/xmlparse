@@ -17,8 +17,7 @@ public class StatusBar extends JPanel {
         add(statusLabel);
     }
 
-    public void refreshStatus(String message)
-    {
+    public void refreshStatus(String message) {
         statusLabel.setText(message);
     }
 

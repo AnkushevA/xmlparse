@@ -42,7 +42,7 @@ public class TextFieldNode {
     @Override
     public String toString() {
         String output = (include ? "<font color='green'>[" + attribute + "]:</font>" : "<font color='red'>[" + attribute + "]:</font>") + text;
-        return "<html>"+ output + "</html>";
+        return "<html>" + output + "</html>";
     }
 
 

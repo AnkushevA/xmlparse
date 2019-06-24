@@ -6,7 +6,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
 
-class NodeEditMenu extends JPanel {
+
+class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
     private final MainFrame mainFrame;
     private JLabel nameLabel;
     private JTextField dataField;
@@ -30,6 +31,7 @@ class NodeEditMenu extends JPanel {
             int[] selectedItems = itemsList.getSelectedIndices();
             if (selectedItems.length == 1) {
                 node.remove(selectedItems[0]);
+
                 updateTreeModel();
                 model.removeElementAt(selectedItems[0]);
             }
@@ -62,8 +64,8 @@ class NodeEditMenu extends JPanel {
             if (node != null) {
                 TextFieldNode textFieldNode = ((TextFieldNode) node.getUserObject());
                 if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
-                    TextFieldNode fieldNode = new TextFieldNode(textFieldNode.getAttribute(), node.isLeaf() ? dataField.getText() : "", includeToOutput.isSelected());
-                    node.setUserObject(fieldNode);
+                    textFieldNode.setText(node.isLeaf() ? dataField.getText() : "");
+                    textFieldNode.setIncluded(includeToOutput.isSelected());
                     if (textFieldNode.getAttribute().equals("MName")) {
                         DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
                         ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
@@ -77,7 +79,6 @@ class NodeEditMenu extends JPanel {
                 }
                 makeNodeEnabled(node, includeToOutput.isSelected());
                 updateTreeModel();
-
             }
         });
         includeToOutput = new JCheckBox("Enabled");
@@ -87,6 +88,24 @@ class NodeEditMenu extends JPanel {
         itemsList.setVisibleRowCount(-1);
         setLayout(new GridBagLayout());
         setLeafEditPanel();
+    }
+
+    public void setTree(JTree tree) {
+        this.tree = tree;
+    }
+
+    @Override
+    public void update(String xmlPath) {
+        setDefaultState();
+    }
+
+    private void setDefaultState() {
+        setLeafEditPanel();
+        nameLabel.setText("Node name");
+        dataField.setText("");
+        includeToOutput.setSelected(false);
+        model.removeAllElements();
+        node = null;
     }
 
     private void updateTreeModel() {
@@ -121,7 +140,7 @@ class NodeEditMenu extends JPanel {
         includeToOutput.setSelected(textFieldNode.isIncluded());
         nameLabel.setText(textFieldNode.getAttribute());
 
-        if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields")){
+        if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields")) {
             setListEditPanel();
             TreeModel treeModel = tree.getModel();
             model.removeAllElements();
@@ -132,12 +151,10 @@ class NodeEditMenu extends JPanel {
                 TextFieldNode childNode = (TextFieldNode) userObject;
                 model.addElement(childNode.getDefaultString());
             }
-        }
-        else if (node.isLeaf()){
+        } else if (node.isLeaf()) {
             setLeafEditPanel();
             dataField.setText(textFieldNode.getText());
-        }
-        else {
+        } else {
             setDefaultEditPanel();
             includeToOutput.setSelected(textFieldNode.isIncluded());
             nameLabel.setText(textFieldNode.getAttribute());
@@ -148,23 +165,23 @@ class NodeEditMenu extends JPanel {
     private void makeNodeEnabled(DefaultMutableTreeNode node, boolean enable) {
         TextFieldNode leafNode = (TextFieldNode) node.getUserObject();
         leafNode.setIncluded(enable);
-        if (!node.isLeaf()){
+        if (!node.isLeaf()) {
             TreeModel treeModel = tree.getModel();
             int childCount = treeModel.getChildCount(node);
             for (int i = 0; i < childCount; i++) {
-                makeNodeEnabled((DefaultMutableTreeNode)(treeModel.getChild(node, i)), enable);
+                makeNodeEnabled((DefaultMutableTreeNode) (treeModel.getChild(node, i)), enable);
             }
         }
     }
 
-    private void removeComponents(){
-        for (Component component: getComponents()) {
+    private void removeComponents() {
+        for (Component component : getComponents()) {
             remove(component);
             revalidate();
         }
     }
 
-    private void setDefaultEditPanel(){
+    private void setDefaultEditPanel() {
         removeComponents();
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -211,7 +228,7 @@ class NodeEditMenu extends JPanel {
         repaint();
     }
 
-    private void setListEditPanel(){
+    private void setListEditPanel() {
         removeComponents();
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -229,14 +246,14 @@ class NodeEditMenu extends JPanel {
         gc.gridx = 0;
         gc.gridy = 2;
         gc.fill = GridBagConstraints.BOTH;
-        gc.insets = new Insets(0, 5 , 5 ,5);
+        gc.insets = new Insets(0, 5, 5, 5);
         add(addButton, gc);
 
         gc.gridwidth = 1;
         gc.gridx = 0;
         gc.gridy = 3;
         gc.fill = GridBagConstraints.BOTH;
-        gc.insets = new Insets(0, 5 , 0 ,5);
+        gc.insets = new Insets(0, 5, 0, 5);
         add(removeButton, gc);
 
 
@@ -247,16 +264,15 @@ class NodeEditMenu extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         JScrollPane scrollPane = new JScrollPane(itemsList);
         add(scrollPane, gc);
-        scrollPane.setPreferredSize(new Dimension(200,120));
+        scrollPane.setPreferredSize(new Dimension(200, 120));
 
         gc.gridwidth = 1;
         gc.weighty = 1;
         gc.gridy = 6;
         gc.anchor = GridBagConstraints.PAGE_START;
         gc.fill = GridBagConstraints.NONE;
-        gc.insets = new Insets(5, 0 , 0 ,0);
+        gc.insets = new Insets(5, 0, 0, 0);
         add(okButton, gc);
         repaint();
     }
-
 }
