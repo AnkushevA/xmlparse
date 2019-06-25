@@ -5,17 +5,23 @@ import com.eviware.soapui.impl.wsdl.WsdlOperation;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
 import com.eviware.soapui.model.iface.Operation;
-import com.eviware.soapui.support.SoapUIException;
-import org.apache.xmlbeans.XmlException;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -37,26 +43,29 @@ class LeftMenu extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 String url = JOptionPane.showInputDialog(mainFrame, "Вставьте ссылку или путь к файлу:");
                 try {
+                    createDirectoryForXmls();
                     WsdlProject project = new WsdlProject();
                     WsdlInterface[] wsdls = WsdlImporter.importWsdl(project, url);
                     WsdlInterface wsdl = wsdls[0];
+
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    TransformerFactory tFactory = TransformerFactory.newInstance();
+                    Transformer transformer = tFactory.newTransformer();
+
                     for (Operation operation : wsdl.getOperationList()) {
                         WsdlOperation wsdlOperation = (WsdlOperation) operation;
-                        System.out.println("OP:" + wsdlOperation.getName());
-                        System.out.println("Request:");
-                        System.out.println(wsdlOperation.createRequest(true));
-                        System.out.println("Response:");
-                        System.out.println(wsdlOperation.createResponse(true));
+                        String request = wsdlOperation.createRequest(true);
+                        Document doc = builder.parse(new InputSource(new StringReader(request)));
+
+                        DOMSource source = new DOMSource(doc);
+                        StreamResult result = new StreamResult(new File("./XMLs/" + wsdlOperation.getName() + ".xml"));
+                        transformer.transform(source, result);
                     }
 
-                } catch (XmlException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SoapUIException e) {
-                    e.printStackTrace();
+                    refreshMenu("./XMLs/");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Ошибка получения списка запросов.");
                 }
             }
         });
@@ -69,17 +78,16 @@ class LeftMenu extends JPanel {
                 String selectedValue = itemsList.getSelectedValue();
                 String path = menuFiles.get(selectedValue);
                 if (Files.notExists(Paths.get(path))) {
-                    JOptionPane.showMessageDialog(null, String.format("%s doesn't exist!", path));
+                    JOptionPane.showMessageDialog(null, String.format("%s не существует.", path));
                 } else {
-//                    mainFrame.redrawTree(path);
                     mainFrame.setLeftMenuState(path);
                 }
             }
         });
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        itemsList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        itemsList.setLayoutOrientation(JList.VERTICAL);
 
-        add(itemsList, BorderLayout.CENTER);
+        add(new JScrollPane(itemsList), BorderLayout.CENTER);
         add(parseXmlsButton, BorderLayout.SOUTH);
     }
 
@@ -97,10 +105,15 @@ class LeftMenu extends JPanel {
         }
     }
 
-    private void stringToDom(String xmlSource)
-            throws IOException {
-        java.io.FileWriter fw = new java.io.FileWriter("my-file.xml");
-        fw.write(xmlSource);
-        fw.close();
+    private void createDirectoryForXmls() {
+        File theDir = new File("XMLs");
+        if (!theDir.exists()) {
+            try {
+                theDir.mkdir();
+            } catch (SecurityException se) {
+                JOptionPane.showMessageDialog(null, "Невозможно создать папку для файлов.");
+            }
+
+        }
     }
 }

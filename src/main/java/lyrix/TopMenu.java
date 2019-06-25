@@ -19,7 +19,7 @@ class TopMenu extends JPanel {
 
         JButton collapseTreeButton = makeButton("Свернуть дерево", actionEvent -> collapseCommand.execute());
 
-        JButton chooseFolderButton = makeButton("Выберите папку", actionEvent -> chooseFolder());
+//        JButton chooseFolderButton = makeButton("Выберите папку", actionEvent -> chooseFolder());
 
         JButton makeXMLButton = makeButton("Отправить запрос", actionEvent -> mainFrame.showXMLRequestWindow(mainFrame.makeXML()));
 
@@ -27,7 +27,7 @@ class TopMenu extends JPanel {
 
         add(expandTreeButton);
         add(collapseTreeButton);
-        add(chooseFolderButton);
+//        add(chooseFolderButton);
         add(makeXMLButton);
     }
 
