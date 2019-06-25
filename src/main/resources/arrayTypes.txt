@@ -1,0 +1,7 @@
+ArrayOf_xsd_string - string
+ArrayOfMessageField - MessageField
+ArrayOfReferenceObject - ReferenceObject
+ArrayOfIssueInfo - IssueInfo
+ArrayOfFieldValue - FieldValue
+ArrayOfObjectInfo - ObjectInfo
+ArrayOfCardData - CardData

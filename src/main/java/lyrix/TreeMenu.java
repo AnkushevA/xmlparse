@@ -149,25 +149,29 @@ class TreeMenu extends JPanel implements LeftMenuUpdateListener {
                     }
                 }
             }
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            soapMsg.writeTo(out);
-            String strMsg = new String(out.toByteArray());
-            StreamResult streamResult = new StreamResult(new StringWriter());
-            Source xmlInput = new StreamSource(new StringReader(strMsg));
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-/*
-            transformer.transform(xmlInput,
-                    new StreamResult(new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml")));
-*/
-            transformer.transform(xmlInput, streamResult);
-            String xmlResult = streamResult.getWriter().toString();
+            String xmlResult = getXmlFormattedString(soapMsg);
             return xmlResult;
         } catch (SOAPException | IOException | TransformerException e) {
             JOptionPane.showMessageDialog(null, "Невозможно создать XML!");
         }
         return "";
+    }
+
+    private String getXmlFormattedString(SOAPMessage soapMsg) throws SOAPException, IOException, TransformerException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        soapMsg.writeTo(out);
+        String strMsg = new String(out.toByteArray());
+        StreamResult streamResult = new StreamResult(new StringWriter());
+        Source xmlInput = new StreamSource(new StringReader(strMsg));
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+/*
+            transformer.transform(xmlInput,
+                    new StreamResult(new FileOutputStream("C:\\Users\\BASS4x4\\IntelliJIDEAProjects\\xmlparse\\src\\main\\resources\\outputXML.xml")));
+*/
+        transformer.transform(xmlInput, streamResult);
+        return streamResult.getWriter().toString();
     }
 
     private void addXMLChildNode(SOAPElement parent, DefaultMutableTreeNode childNode, SOAPEnvelope envelope) {

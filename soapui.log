@@ -1,0 +1,82 @@
+2019-06-25 17:57:56,509 WARN  [SoapUI] Missing folder [C:\Users\BASS4x4\IntelliJIDEAProjects\xmlparse\ext] for external libraries
+2019-06-25 17:57:57,148 INFO  [DefaultSoapUICore] initialized soapui-settings from [C:\Users\BASS4x4\soapui-settings.xml]
+2019-06-25 17:58:01,193 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/xop.xsd with targetNamespace http://www.w3.org/2004/08/xop/include
+2019-06-25 17:58:01,242 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/XMLSchema.xsd with targetNamespace http://www.w3.org/2001/XMLSchema
+2019-06-25 17:58:01,244 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/xml.xsd with targetNamespace http://www.w3.org/XML/1998/namespace
+2019-06-25 17:58:01,247 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/swaref.xsd with targetNamespace http://ws-i.org/profiles/basic/1.1/xsd
+2019-06-25 17:58:01,249 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/xmime200505.xsd with targetNamespace http://www.w3.org/2005/05/xmlmime
+2019-06-25 17:58:01,251 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/xmime200411.xsd with targetNamespace http://www.w3.org/2004/11/xmlmime
+2019-06-25 17:58:01,260 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/soapEnvelope.xsd with targetNamespace http://schemas.xmlsoap.org/soap/envelope/
+2019-06-25 17:58:01,269 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/soapEncoding.xsd with targetNamespace http://schemas.xmlsoap.org/soap/encoding/
+2019-06-25 17:58:01,272 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/soapEnvelope12.xsd with targetNamespace http://www.w3.org/2003/05/soap-envelope
+2019-06-25 17:58:01,277 INFO  [SchemaUtils] Added default schema from file:/C:/Program%20Files/SmartBear/SoapUI-Pro-5.1.1/lib/soapui-5.1.1.jar!/com/eviware/soapui/resources/xsds/soapEncoding12.xsd with targetNamespace http://www.w3.org/2003/05/soap-encoding
+2019-06-25 17:58:01,770 INFO  [SchemaUtils] Loading schema types from [file:/C:/Users/BASS4x4/Desktop/Интеграция/CardlibIntegrationService2Port.wsdl]
+2019-06-25 17:58:01,770 INFO  [SchemaUtils] Getting schema file:/C:/Users/BASS4x4/Desktop/Интеграция/CardlibIntegrationService2Port.wsdl
+2019-06-25 17:58:02,349 INFO  [WsdlImporter] Finding importer for {http://cardlibrary2.webservices.integration.css.aamsystems.com}CardlibIntegrationService2PortSoapBinding
+2019-06-25 17:58:02,357 INFO  [WsdlImporter] Importing binding {http://cardlibrary2.webservices.integration.css.aamsystems.com}CardlibIntegrationService2PortSoapBinding
+2019-06-25 17:58:02,507 INFO  [Soap11HttpBindingImporter] importing endpoint http://192.168.1.237:4444/AxisWebApp/services/CardlibIntegrationService2Port
+2019-06-25 17:58:02,713 INFO  [Soap11HttpBindingImporter] importing operation addReferenceObject
+2019-06-25 17:58:02,793 INFO  [Soap11HttpBindingImporter] importing operation addReferenceObjects
+2019-06-25 17:58:02,796 INFO  [Soap11HttpBindingImporter] importing operation cancelMessageQuery
+2019-06-25 17:58:02,798 INFO  [Soap11HttpBindingImporter] importing operation cancelObjectQuery
+2019-06-25 17:58:02,800 INFO  [Soap11HttpBindingImporter] importing operation changeCard
+2019-06-25 17:58:02,802 INFO  [Soap11HttpBindingImporter] importing operation changeCardData
+2019-06-25 17:58:02,804 INFO  [Soap11HttpBindingImporter] importing operation changeCardsData
+2019-06-25 17:58:02,806 INFO  [Soap11HttpBindingImporter] importing operation changeIssue
+2019-06-25 17:58:02,808 INFO  [Soap11HttpBindingImporter] importing operation changeIssues
+2019-06-25 17:58:02,810 INFO  [Soap11HttpBindingImporter] importing operation changePassState
+2019-06-25 17:58:02,812 INFO  [Soap11HttpBindingImporter] importing operation changeReferenceObject
+2019-06-25 17:58:02,814 INFO  [Soap11HttpBindingImporter] importing operation changeUser
+2019-06-25 17:58:02,816 INFO  [Soap11HttpBindingImporter] importing operation changeUsers
+2019-06-25 17:58:02,820 INFO  [Soap11HttpBindingImporter] importing operation createAccessLevels
+2019-06-25 17:58:02,822 INFO  [Soap11HttpBindingImporter] importing operation createCards
+2019-06-25 17:58:02,825 INFO  [Soap11HttpBindingImporter] importing operation createIssue
+2019-06-25 17:58:02,831 INFO  [Soap11HttpBindingImporter] importing operation createIssues
+2019-06-25 17:58:02,834 INFO  [Soap11HttpBindingImporter] importing operation CreateTempPassRequest
+2019-06-25 17:58:02,836 INFO  [Soap11HttpBindingImporter] importing operation createUser
+2019-06-25 17:58:02,838 INFO  [Soap11HttpBindingImporter] importing operation createUsers
+2019-06-25 17:58:02,840 INFO  [Soap11HttpBindingImporter] importing operation deactivateIssue
+2019-06-25 17:58:02,842 INFO  [Soap11HttpBindingImporter] importing operation deleteObject
+2019-06-25 17:58:02,844 INFO  [Soap11HttpBindingImporter] importing operation fetchMessages
+2019-06-25 17:58:02,845 INFO  [Soap11HttpBindingImporter] importing operation getAccessLevels
+2019-06-25 17:58:02,847 INFO  [Soap11HttpBindingImporter] importing operation getActiveCards
+2019-06-25 17:58:02,849 INFO  [Soap11HttpBindingImporter] importing operation getCardCurrentIssue
+2019-06-25 17:58:02,851 INFO  [Soap11HttpBindingImporter] importing operation getCardFieldInfo
+2019-06-25 17:58:02,853 INFO  [Soap11HttpBindingImporter] importing operation getCards
+2019-06-25 17:58:02,855 INFO  [Soap11HttpBindingImporter] importing operation getExternalID
+2019-06-25 17:58:02,857 INFO  [Soap11HttpBindingImporter] importing operation getExternalObjectID
+2019-06-25 17:58:02,859 INFO  [Soap11HttpBindingImporter] importing operation getLyriXID
+2019-06-25 17:58:02,861 INFO  [Soap11HttpBindingImporter] importing operation getLyrixVersion
+2019-06-25 17:58:02,863 INFO  [Soap11HttpBindingImporter] importing operation getMessageData
+2019-06-25 17:58:02,865 INFO  [Soap11HttpBindingImporter] importing operation getMessages
+2019-06-25 17:58:02,866 INFO  [Soap11HttpBindingImporter] importing operation getObjectAddFieldsInfo
+2019-06-25 17:58:02,868 INFO  [Soap11HttpBindingImporter] importing operation getObjectAddFieldsValue
+2019-06-25 17:58:02,870 INFO  [Soap11HttpBindingImporter] importing operation getObjectByID
+2019-06-25 17:58:02,872 INFO  [Soap11HttpBindingImporter] importing operation getObjectByObjectID
+2019-06-25 17:58:02,874 INFO  [Soap11HttpBindingImporter] importing operation getObjectByType
+2019-06-25 17:58:02,876 INFO  [Soap11HttpBindingImporter] importing operation getObjects
+2019-06-25 17:58:02,878 INFO  [Soap11HttpBindingImporter] importing operation getReferenceObjects
+2019-06-25 17:58:02,880 INFO  [Soap11HttpBindingImporter] importing operation getUserByIssue
+2019-06-25 17:58:02,882 INFO  [Soap11HttpBindingImporter] importing operation getUserCardData
+2019-06-25 17:58:02,884 INFO  [Soap11HttpBindingImporter] importing operation getUserCardDataByCardIssue
+2019-06-25 17:58:02,886 INFO  [Soap11HttpBindingImporter] importing operation getUserCount
+2019-06-25 17:58:02,888 INFO  [Soap11HttpBindingImporter] importing operation getUserData
+2019-06-25 17:58:02,890 INFO  [Soap11HttpBindingImporter] importing operation getUserFieldInfo
+2019-06-25 17:58:02,893 INFO  [Soap11HttpBindingImporter] importing operation getUsers
+2019-06-25 17:58:02,895 INFO  [Soap11HttpBindingImporter] importing operation getUsersByGal
+2019-06-25 17:58:02,897 INFO  [Soap11HttpBindingImporter] importing operation isExist
+2019-06-25 17:58:02,899 INFO  [Soap11HttpBindingImporter] importing operation issueCard
+2019-06-25 17:58:02,901 INFO  [Soap11HttpBindingImporter] importing operation issueCards
+2019-06-25 17:58:02,903 INFO  [Soap11HttpBindingImporter] importing operation logoff
+2019-06-25 17:58:02,905 INFO  [Soap11HttpBindingImporter] importing operation logon
+2019-06-25 17:58:02,907 INFO  [Soap11HttpBindingImporter] importing operation logonDevice
+2019-06-25 17:58:02,909 INFO  [Soap11HttpBindingImporter] importing operation registerForMessages
+2019-06-25 17:58:02,911 INFO  [Soap11HttpBindingImporter] importing operation registerMessageListener
+2019-06-25 17:58:02,913 INFO  [Soap11HttpBindingImporter] importing operation returnCard
+2019-06-25 17:58:02,916 INFO  [Soap11HttpBindingImporter] importing operation sendMessages
+2019-06-25 17:58:02,918 INFO  [Soap11HttpBindingImporter] importing operation setExternalID
+2019-06-25 17:58:02,922 INFO  [Soap11HttpBindingImporter] importing operation unregisterMessageListener
+2019-06-25 17:58:02,926 INFO  [Soap11HttpBindingImporter] importing operation updateData
+2019-06-25 17:58:02,929 INFO  [Soap11HttpBindingImporter] importing operation updateDataEx
+2019-06-25 17:58:02,931 INFO  [Soap11HttpBindingImporter] importing operation updateDatas
+2019-06-25 17:58:02,933 INFO  [Soap11HttpBindingImporter] importing operation updateDatasEx

@@ -31,7 +31,6 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
             int[] selectedItems = itemsList.getSelectedIndices();
             if (selectedItems.length == 1) {
                 node.remove(selectedItems[0]);
-
                 updateTreeModel();
                 model.removeElementAt(selectedItems[0]);
             }
@@ -63,21 +62,16 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
         okButton = ButtonFactory.makeButton("OK", actionEvent -> {
             if (node != null) {
                 TextFieldNode textFieldNode = ((TextFieldNode) node.getUserObject());
-                if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf()) {
+                if (shouldHaveEditFields(textFieldNode)) {
                     textFieldNode.setText(node.isLeaf() ? dataField.getText() : "");
                     textFieldNode.setIncluded(includeToOutput.isSelected());
                     if (textFieldNode.getAttribute().equals("MName")) {
-                        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
-                        ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
+                        setMNameParentString();
                     } else if (textFieldNode.getAttribute().equals("primaryID")) {
-                        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
-                        TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
-                        if (itemNode.getAttribute().equals("item")) {
-                            itemNode.setText(dataField.getText());
-                        }
+                        setPrimaryIDParentString();
                     }
                 }
-                makeNodeEnabled(node, includeToOutput.isSelected());
+                makeNodeAndChildrenEnabled(node, includeToOutput.isSelected());
                 updateTreeModel();
             }
         });
@@ -88,6 +82,23 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
         itemsList.setVisibleRowCount(-1);
         setLayout(new GridBagLayout());
         setLeafEditPanel();
+    }
+
+    private void setPrimaryIDParentString() {
+        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent().getParent();
+        TextFieldNode itemNode = (TextFieldNode) temp.getUserObject();
+        if (itemNode.getAttribute().equals("item")) {
+            itemNode.setText(dataField.getText());
+        }
+    }
+
+    private void setMNameParentString() {
+        DefaultMutableTreeNode temp = (DefaultMutableTreeNode) node.getParent();
+        ((TextFieldNode) temp.getUserObject()).setText(dataField.getText());
+    }
+
+    private boolean shouldHaveEditFields(TextFieldNode textFieldNode) {
+        return textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields") || node.isLeaf();
     }
 
     public void setTree(JTree tree) {
@@ -140,41 +151,47 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
         includeToOutput.setSelected(textFieldNode.isIncluded());
         nameLabel.setText(textFieldNode.getAttribute());
 
-        if (textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields")) {
+        if (isArrayType(textFieldNode)) {
             setListEditPanel();
-            TreeModel treeModel = tree.getModel();
-            model.removeAllElements();
-            int childCount = treeModel.getChildCount(node);
-            for (int i = 0; i < childCount; i++) {
-                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(node, i));
-                Object userObject = treeNode.getUserObject();
-                TextFieldNode childNode = (TextFieldNode) userObject;
-                model.addElement(childNode.getDefaultString());
-            }
+            fillArrayTypeList(node);
         } else if (node.isLeaf()) {
             setLeafEditPanel();
             dataField.setText(textFieldNode.getText());
         } else {
             setDefaultEditPanel();
-            includeToOutput.setSelected(textFieldNode.isIncluded());
-            nameLabel.setText(textFieldNode.getAttribute());
         }
 
     }
 
-    private void makeNodeEnabled(DefaultMutableTreeNode node, boolean enable) {
+    private void fillArrayTypeList(DefaultMutableTreeNode node) {
+        TreeModel treeModel = tree.getModel();
+        model.removeAllElements();
+        int childCount = treeModel.getChildCount(node);
+        for (int i = 0; i < childCount; i++) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (treeModel.getChild(node, i));
+            Object userObject = treeNode.getUserObject();
+            TextFieldNode childNode = (TextFieldNode) userObject;
+            model.addElement(childNode.getDefaultString());
+        }
+    }
+
+    private boolean isArrayType(TextFieldNode textFieldNode) {
+        return textFieldNode.getAttribute().equals("accessLevels") || textFieldNode.getAttribute().equals("fields");
+    }
+
+    private void makeNodeAndChildrenEnabled(DefaultMutableTreeNode node, boolean enable) {
         TextFieldNode leafNode = (TextFieldNode) node.getUserObject();
         leafNode.setIncluded(enable);
         if (!node.isLeaf()) {
             TreeModel treeModel = tree.getModel();
             int childCount = treeModel.getChildCount(node);
             for (int i = 0; i < childCount; i++) {
-                makeNodeEnabled((DefaultMutableTreeNode) (treeModel.getChild(node, i)), enable);
+                makeNodeAndChildrenEnabled((DefaultMutableTreeNode) (treeModel.getChild(node, i)), enable);
             }
         }
     }
 
-    private void removeComponents() {
+    private void cleanPanel() {
         for (Component component : getComponents()) {
             remove(component);
             revalidate();
@@ -182,7 +199,7 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
     }
 
     private void setDefaultEditPanel() {
-        removeComponents();
+        cleanPanel();
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridy = 0;
@@ -204,7 +221,7 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
     }
 
     private void setLeafEditPanel() {
-        removeComponents();
+        cleanPanel();
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
@@ -229,7 +246,7 @@ class NodeEditMenu extends JPanel implements LeftMenuUpdateListener {
     }
 
     private void setListEditPanel() {
-        removeComponents();
+        cleanPanel();
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridwidth = 6;

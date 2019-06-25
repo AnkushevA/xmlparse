@@ -1,5 +1,13 @@
 package lyrix;
 
+import com.eviware.soapui.impl.wsdl.WsdlInterface;
+import com.eviware.soapui.impl.wsdl.WsdlOperation;
+import com.eviware.soapui.impl.wsdl.WsdlProject;
+import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
+import com.eviware.soapui.model.iface.Operation;
+import com.eviware.soapui.support.SoapUIException;
+import org.apache.xmlbeans.XmlException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,12 +15,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
 class LeftMenu extends JPanel {
-
     private final MainFrame mainFrame;
     private JList<String> itemsList;
     private DefaultListModel<String> items;
@@ -27,7 +35,29 @@ class LeftMenu extends JPanel {
         parseXmlsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-//                String url = JOptionPane.showInputDialog(mainFrame, "Вставьте ссылку:");
+                String url = JOptionPane.showInputDialog(mainFrame, "Вставьте ссылку или путь к файлу:");
+                try {
+                    WsdlProject project = new WsdlProject();
+                    WsdlInterface[] wsdls = WsdlImporter.importWsdl(project, url);
+                    WsdlInterface wsdl = wsdls[0];
+                    for (Operation operation : wsdl.getOperationList()) {
+                        WsdlOperation wsdlOperation = (WsdlOperation) operation;
+                        System.out.println("OP:" + wsdlOperation.getName());
+                        System.out.println("Request:");
+                        System.out.println(wsdlOperation.createRequest(true));
+                        System.out.println("Response:");
+                        System.out.println(wsdlOperation.createResponse(true));
+                    }
+
+                } catch (XmlException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SoapUIException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -67,4 +97,10 @@ class LeftMenu extends JPanel {
         }
     }
 
+    private void stringToDom(String xmlSource)
+            throws IOException {
+        java.io.FileWriter fw = new java.io.FileWriter("my-file.xml");
+        fw.write(xmlSource);
+        fw.close();
+    }
 }

@@ -4,19 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-class TopMenu extends JPanel {
+import static lyrix.ButtonFactory.makeButton;
 
+class TopMenu extends JPanel {
+    private ICommand expandCommand;
+    private ICommand collapseCommand;
     private final MainFrame mainFrame;
 
-    TopMenu(final MainFrame mainFrame) {
+    TopMenu(final MainFrame mainFrame, ICommand expandCommand, ICommand collapseCommand) {
         this.mainFrame = mainFrame;
-        JButton expandTreeButton = ButtonFactory.makeButton("Развернуть дерево", actionEvent -> mainFrame.expandTree(true));
+        this.expandCommand = expandCommand;
+        this.collapseCommand = collapseCommand;
+        JButton expandTreeButton = makeButton("Развернуть дерево", actionEvent -> expandCommand.execute());
 
-        JButton collapseTreeButton = ButtonFactory.makeButton("Свернуть дерево", actionEvent -> mainFrame.expandTree(false));
+        JButton collapseTreeButton = makeButton("Свернуть дерево", actionEvent -> collapseCommand.execute());
 
-        JButton chooseFolderButton = ButtonFactory.makeButton("Выберите папку", actionEvent -> chooseFolder());
+        JButton chooseFolderButton = makeButton("Выберите папку", actionEvent -> chooseFolder());
 
-        JButton makeXMLButton = ButtonFactory.makeButton("Отправить запрос", actionEvent -> mainFrame.showXMLRequestWindow(mainFrame.makeXML()));
+        JButton makeXMLButton = makeButton("Отправить запрос", actionEvent -> mainFrame.showXMLRequestWindow(mainFrame.makeXML()));
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
